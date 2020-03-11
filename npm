@@ -1,0 +1,4 @@
+#!/bin/bash
+
+args="$@"
+docker-compose run -u 1000 npm $args
