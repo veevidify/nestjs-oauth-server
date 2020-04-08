@@ -6,7 +6,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./data-temp:/var/lib/postgresql/data
+      - ${PATH_PREFIX}/data-temp:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: dev
@@ -22,7 +22,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - .:/home/node/app
+      - ${PATH_PREFIX}:/home/node/app
     environment:
       NODE_ENV: development
 
@@ -32,6 +32,6 @@ services:
     working_dir: /home/node/app
     entrypoint: ['npm']
     volumes:
-      - .:/home/node/app
+      - ${PATH_PREFIX}:/home/node/app
     environment:
       NODE_ENV: development
