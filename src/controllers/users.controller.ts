@@ -1,4 +1,4 @@
-import { Get, Controller, HttpCode, Param, HttpException } from '@nestjs/common';
+import { Get, Controller, HttpCode, Param } from '@nestjs/common';
 import { UserService } from 'src/services/users.service';
 
 @Controller('users')

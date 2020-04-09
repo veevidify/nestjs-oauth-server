@@ -1,19 +1,26 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { AppController } from '../controllers/app.controller';
-import { AppService } from '../services/app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { AppController } from 'src/controllers/app.controller';
 import { UserController } from 'src/controllers/users.controller';
-import { UserService } from '../services/users.service';
+import { AppService } from 'src/services/app.service';
+import { UserService } from 'src/services/users.service';
 import { LoggerMiddleware } from 'src/middlewares/logger.middleware';
 
+import typeormConfig from 'src/typeormConfig';
+
+import { User } from './../entities/user.entity';
+
+// declare deps: orm configs, other modules
+// declare controllers
+// declare service providers as dependency for controllers
 @Module({
-  imports: [],
-  controllers: [AppController, UserController],
+  imports: [TypeOrmModule.forRoot(typeormConfig), TypeOrmModule.forFeature([User])],
   providers: [AppService, UserService],
+  controllers: [AppController, UserController],
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
-    ['/', '/users'].map(routeBaseUrl =>
-      consumer.apply(LoggerMiddleware).forRoutes(routeBaseUrl),
-    );
+    ['/', '/users'].map(routeBaseUrl => consumer.apply(LoggerMiddleware).forRoutes(routeBaseUrl));
   }
 }
