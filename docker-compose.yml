@@ -4,34 +4,41 @@ services:
     image: mdillon/postgis:9.6
     container_name: svc_db
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:5432
     volumes:
-      - ${PATH_PREFIX}/data-temp:/var/lib/postgresql/data
+      - svc_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: dev
       POSTGRES_DB: dev
 
   web:
-    image: 'node:10.16-alpine'
+    # image: 'node:10.16-alpine'
+    build: '.'
     container_name: svc_web
-    working_dir: /home/node/app
+    working_dir: /app
     command: ['npm', 'run', 'start:dev']
     depends_on:
       - postgres
     ports:
       - 3000:3000
     volumes:
-      - ${PATH_PREFIX}:/home/node/app
+      - ${PATH_PREFIX}:/app
     environment:
       NODE_ENV: development
 
   npm:
-    image: 'node:10.16-alpine'
+    # image: 'node:10.16-alpine'
+    build: '.'
     container_name: svc_npm
-    working_dir: /home/node/app
-    entrypoint: ['npm']
+    working_dir: /app
+    # entrypoint: ['npm']
+    entrypoint: ['/bin/sh', '-c']
     volumes:
-      - ${PATH_PREFIX}:/home/node/app
+      - ${PATH_PREFIX}:/app
     environment:
       NODE_ENV: development
+
+volumes:
+  svc_data:
+    external: true

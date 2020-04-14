@@ -17,4 +17,4 @@ const typeormConfig: ConnectionOptions = {
   },
 };
 
-export default typeormConfig;
+export = typeormConfig;

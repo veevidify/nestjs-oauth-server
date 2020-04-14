@@ -7,15 +7,13 @@ import { AppService } from 'src/services/app.service';
 import { UserService } from 'src/services/users.service';
 import { LoggerMiddleware } from 'src/middlewares/logger.middleware';
 
-import typeormConfig from 'src/typeormConfig';
-
 import { User } from './../entities/user.entity';
 
 // declare deps: orm configs, other modules
 // declare controllers
 // declare service providers as dependency for controllers
 @Module({
-  imports: [TypeOrmModule.forRoot(typeormConfig), TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forRoot(), TypeOrmModule.forFeature([User])],
   providers: [AppService, UserService],
   controllers: [AppController, UserController],
 })
