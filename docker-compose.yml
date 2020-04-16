@@ -32,8 +32,7 @@ services:
     build: '.'
     container_name: svc_npm
     working_dir: /app
-    # entrypoint: ['npm']
-    entrypoint: ['/bin/sh', '-c']
+    entrypoint: ['npm']
     volumes:
       - ${PATH_PREFIX}:/app
     environment:

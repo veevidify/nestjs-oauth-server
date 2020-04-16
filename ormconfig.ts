@@ -8,12 +8,12 @@ const typeormConfig: ConnectionOptions = {
   host: 'postgres',
   port: 5432,
   synchronize: false,
-  entities: [__dirname + '/entities/*.entity.ts'],
-  migrations: ['migrations/*.migration.ts'],
+  entities: [__dirname + '/src/entities/*.entity.ts'],
+  migrations: ['src/migrations/*.migration.ts'],
   logging: ['error'],
   cli: {
-    migrationsDir: 'migrations',
-    entitiesDir: 'entities',
+    migrationsDir: 'src/migrations',
+    entitiesDir: 'src/entities',
   },
 };
 
