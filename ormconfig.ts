@@ -6,9 +6,10 @@ const typeormConfig: ConnectionOptions = {
   username: process.env.POSTGRES_USER || 'dev',
   password: process.env.POSTGRES_PASS || 'dev',
   host: process.env.POSTGRES_HOST || 'postgres',
-  port: process.env.POSTGRES_PORT || 5432,
+  port: Number(process.env.POSTGRES_PORT) || 5432,
   synchronize: false,
-  entities: [__dirname + '/src/entities/*.entity.ts'],
+  // entities: [__dirname + '/src/entities/*.entity.ts'],
+  entities: ['dist/**/**.entity{.ts,.js}'],
   migrations: ['src/migrations/*.migration.ts'],
   logging: ['error'],
   cli: {
@@ -17,4 +18,4 @@ const typeormConfig: ConnectionOptions = {
   },
 };
 
-export = typeormConfig;
+export default typeormConfig;

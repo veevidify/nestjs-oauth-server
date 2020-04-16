@@ -1,4 +1,17 @@
 {
   "editor.formatOnSave": true,
-  "editor.rulers": [100]
+  "editor.rulers": [
+    100
+  ],
+  "sqltools.connections": [
+    {
+      "database": "dev",
+      "dialect": "PostgreSQL",
+      "name": "nestjs-postgres",
+      "password": "dev",
+      "port": 5433,
+      "server": "localhost",
+      "username": "dev"
+    }
+  ]
 }
