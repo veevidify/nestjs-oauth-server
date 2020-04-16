@@ -8,7 +8,7 @@ import { UserService } from 'src/services/users.service';
 import { LoggerMiddleware } from 'src/middlewares/logger.middleware';
 
 import { User } from './../entities/user.entity';
-import ormconfig from '../../ormconfig';
+import * as ormconfig from '../../ormconfig';
 
 // declare deps: orm configs, other modules
 // declare controllers

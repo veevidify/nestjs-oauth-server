@@ -10,7 +10,7 @@ const typeormConfig: ConnectionOptions = {
   synchronize: false,
   // entities: [__dirname + '/src/entities/*.entity.ts'],
   entities: ['dist/**/**.entity{.ts,.js}'],
-  migrations: ['src/migrations/*.migration.ts'],
+  migrations: ['dist/**/**.migration{.ts,.js}'],
   logging: ['error'],
   cli: {
     migrationsDir: 'src/migrations',
@@ -18,4 +18,4 @@ const typeormConfig: ConnectionOptions = {
   },
 };
 
-export default typeormConfig;
+export = typeormConfig;
