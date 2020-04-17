@@ -1,8 +1,10 @@
-import { User } from './../entities/user.entity';
 import { Injectable } from '@nestjs/common';
-import { omit } from 'src/utils/functions';
+import { User } from 'src/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { omit } from 'src/utils/functions';
 
+// services use external connectors (including db repository)
+// all pure function, with mockable services dependencies
 @Injectable()
 export class AuthService {
   constructor(private userService: UsersService) {}
