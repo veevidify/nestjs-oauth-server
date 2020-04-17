@@ -38,6 +38,17 @@ services:
     environment:
       NODE_ENV: development
 
+  nest:
+    # image: 'node:10.16-alpine'
+    build: '.'
+    container_name: svc_nest
+    working_dir: /app
+    entrypoint: ['nest']
+    volumes:
+      - ${PATH_PREFIX}:/app
+    environment:
+      NODE_ENV: development
+
 volumes:
   svc_data:
     external: true

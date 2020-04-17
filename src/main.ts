@@ -1,6 +1,6 @@
 import { NestFactory, HttpAdapterHost } from '@nestjs/core';
-import { AppModule } from './modules/app.module';
 import { GeneralExceptionHandler } from './exceptions/all.handler';
+import { AppModule } from './app/app.module';
 
 // entrypoint
 // start web services

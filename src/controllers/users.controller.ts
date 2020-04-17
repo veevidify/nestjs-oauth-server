@@ -1,10 +1,9 @@
 import { Get, Controller, HttpCode, Param } from '@nestjs/common';
-import { UserService } from 'src/services/users.service';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {
-  }
+  constructor(private readonly userService: UsersService) {}
 
   @Get()
   @HttpCode(200)

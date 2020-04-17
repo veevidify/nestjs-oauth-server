@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from '../services/app.service';
+import { AppService } from 'src/app/app.service';
 
 // main app module
 // use for things like health check, metadata, api doc

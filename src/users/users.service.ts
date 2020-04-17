@@ -3,8 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+// services use external connectors (including db repository)
+// to fetch resource and parse them as typed entities
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
 
   public adminGetUsers(): Promise<User[]> {
@@ -13,6 +15,10 @@ export class UserService {
 
   public adminGetIndividualUser(userId: string): Promise<User> {
     return this.userRepository.findOneOrFail(userId);
+  }
+
+  public getUserByUsername(username: string): Promise<User> {
+    return this.userRepository.findOne({ where: { username } });
   }
 
   public async remove(userId: string): Promise<void> {

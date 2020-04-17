@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   Unique,
 } from 'typeorm';
+import * as bc from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 
 @Entity()
@@ -34,4 +35,8 @@ export class User {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  public validatePassword = (password: string) => {
+    return bc.compareSync(password, this.password);
+  };
 }

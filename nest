@@ -1,0 +1,5 @@
+#!/bin/bash
+
+args="$@"
+echo "nest $args"
+docker-compose run --rm nest $args
