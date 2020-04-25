@@ -1,4 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { JwtAuthGuard } from './../auth/guards/jwt.auth_guard';
+import { User } from 'src/entities/user.entity';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { AppService } from 'src/app/app.service';
 
 // main app module
@@ -10,5 +12,11 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req): Partial<User> {
+    return req.user;
   }
 }

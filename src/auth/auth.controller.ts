@@ -6,7 +6,7 @@ import { AuthService } from 'src/auth/auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // route will hit 401 on unauthenticated creds -- validated by guard
+  // route will receive 401 on unauthenticated creds -- validated by local guard
   // on authenticated, sign & issue jwt
   @UseGuards(LocalAuthGuard)
   @Post('/login')

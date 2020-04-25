@@ -1,11 +1,10 @@
-import { AuthController } from './../auth/auth.controller';
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from 'src/app/app.controller';
+import { AuthController } from 'src/auth/auth.controller';
 import { UsersController } from 'src/users/users.controller';
 import { LoggerMiddleware } from 'src/middlewares/logger.middleware';
-
 import { UsersService } from 'src/users/users.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';

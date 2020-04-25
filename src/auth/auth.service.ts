@@ -1,3 +1,4 @@
+import { JwtAuthenticatable } from 'src/auth/interface';
 /* eslint-disable @typescript-eslint/camelcase */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -24,9 +25,9 @@ export class AuthService {
   }
 
   async authenticated(user: Partial<User>) {
-    const payload = {
+    const payload: JwtAuthenticatable = {
+      sub: `${user.id}`,
       username: user.username,
-      sub: user.id,
     };
 
     return {
