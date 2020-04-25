@@ -1,3 +1,4 @@
+import { AuthController } from './../auth/auth.controller';
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -6,7 +7,6 @@ import { UsersController } from 'src/users/users.controller';
 import { LoggerMiddleware } from 'src/middlewares/logger.middleware';
 
 import { UsersService } from 'src/users/users.service';
-import { AuthService } from 'src/auth/auth.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
 import { User } from 'src/entities/user.entity';
@@ -24,8 +24,8 @@ import * as ormconfig from '../../ormconfig';
     AuthModule,
     UsersModule,
   ],
-  providers: [AppService, UsersService, AuthService],
-  controllers: [AppController, UsersController],
+  providers: [AppService, UsersService],
+  controllers: [AppController, UsersController, AuthController],
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {

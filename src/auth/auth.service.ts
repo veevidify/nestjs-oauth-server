@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { omit } from 'src/utils/functions';
@@ -7,7 +9,7 @@ import { omit } from 'src/utils/functions';
 // all pure function, with mockable services dependencies
 @Injectable()
 export class AuthService {
-  constructor(private userService: UsersService) {}
+  constructor(private userService: UsersService, private jwtService: JwtService) {}
 
   async validateUser(username: string, password: string): Promise<Partial<User> | null> {
     const user = await this.userService.getUserByUsername(username);
@@ -19,5 +21,16 @@ export class AuthService {
     }
 
     return null;
+  }
+
+  async authenticated(user: Partial<User>) {
+    const payload = {
+      username: user.username,
+      sub: user.id,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }

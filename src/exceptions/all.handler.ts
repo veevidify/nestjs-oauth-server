@@ -1,5 +1,5 @@
-import { Catch, ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
-import { BaseExceptionFilter } from "@nestjs/core";
+import { Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import { BaseExceptionFilter } from '@nestjs/core';
 import { Response } from 'express';
 
 @Catch()
@@ -8,9 +8,10 @@ export class GeneralExceptionHandler extends BaseExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
 
-    const status = exception instanceof HttpException
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
+    console.log(exception);
+
+    const status =
+      exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     response.status(status).json({
       message: 'Unknown Error',
