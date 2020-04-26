@@ -26,7 +26,8 @@ export class AuthService {
 
   async authenticated(user: Partial<User>) {
     const payload: JwtAuthenticatable = {
-      sub: `${user.id}`,
+      sub: user.id,
+      roles: user.roles,
       username: user.username,
     };
 

@@ -1,4 +1,0 @@
-#!/bin/bash
-
-args="$@"
-docker-compose run --rm -it npm "run typeorm $args"

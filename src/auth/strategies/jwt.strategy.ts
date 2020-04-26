@@ -1,3 +1,4 @@
+import { User } from 'src/entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
@@ -15,9 +16,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super(jwtOptions);
   }
 
-  async validate(payload: JwtAuthenticatable) {
+  async validate(payload: JwtAuthenticatable): Promise<Partial<User>> {
     return {
-      userId: payload.sub,
+      id: payload.sub,
+      roles: payload.roles,
       username: payload.username,
     };
   }

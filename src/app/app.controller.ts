@@ -1,4 +1,4 @@
-import { JwtAuthGuard } from './../auth/guards/jwt.auth_guard';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { User } from 'src/entities/user.entity';
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { AppService } from 'src/app/app.service';
@@ -17,6 +17,7 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req): Partial<User> {
+    console.log({ controller: req });
     return req.user;
   }
 }

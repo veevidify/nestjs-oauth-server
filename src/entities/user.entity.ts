@@ -1,3 +1,4 @@
+import { JwtAuthenticatable } from 'src/auth/interface';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -13,7 +14,7 @@ import { Exclude } from 'class-transformer';
 @Unique(['id', 'username'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   firstName: string;
@@ -28,6 +29,9 @@ export class User {
   @Exclude({ toPlainOnly: true })
   password: string;
 
+  @Column({ type: 'text', array: true, default: '{ user }' })
+  roles: string[];
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;
@@ -39,4 +43,8 @@ export class User {
   public validatePassword = (password: string) => {
     return bc.compareSync(password, this.password);
   };
+
+  public static verifyRoles(userFromJwt: JwtAuthenticatable, roles: string[]) {
+    return roles.some(role => userFromJwt.roles.includes(role));
+  }
 }
