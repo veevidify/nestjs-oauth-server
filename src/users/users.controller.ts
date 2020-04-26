@@ -12,14 +12,14 @@ export class UsersController {
   @RolesAuthorised(['admin', 'user'])
   @HttpCode(200)
   public allUsersForAdmin() {
-    return this.userService.adminGetUsers();
+    return this.userService.allUsers();
   }
 
   @Get('/:id')
   @HttpCode(200)
   public singleUserForAdmin(@Param() params) {
     const { id } = params;
-    return this.userService.adminGetIndividualUser(id);
+    return this.userService.getUser(id);
   }
 
   @Post('/')

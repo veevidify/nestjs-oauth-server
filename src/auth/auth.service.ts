@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { omit } from 'src/utils/functions';
+import { classToPlain } from 'class-transformer';
 
 // services use external connectors (including db repository)
 // all pure function, with mockable services dependencies
@@ -15,10 +15,8 @@ export class AuthService {
   async validateUser(username: string, password: string): Promise<Partial<User> | null> {
     const user = await this.userService.getUserByUsername(username);
 
-    if (user && user.validatePassword(password)) {
-      const partialUser = omit(user)('password');
-
-      return partialUser;
+    if (user && User.validatePassword(user, password)) {
+      return classToPlain(user);
     }
 
     return null;

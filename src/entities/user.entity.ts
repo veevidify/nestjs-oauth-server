@@ -26,7 +26,7 @@ export class User {
   username: string;
 
   @Column()
-  @Exclude({ toPlainOnly: true })
+  @Exclude()
   password: string;
 
   @Column({ type: 'text', array: true, default: '{ user }' })
@@ -40,8 +40,8 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  public validatePassword = (password: string) => {
-    return bc.compareSync(password, this.password);
+  public static validatePassword = (user: User, inputPassword: string) => {
+    return bc.compareSync(inputPassword, user.password);
   };
 
   public static verifyRoles(userFromJwt: JwtAuthenticatable, roles: string[]) {

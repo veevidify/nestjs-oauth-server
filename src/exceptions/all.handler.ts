@@ -8,7 +8,7 @@ export class GeneralExceptionHandler extends BaseExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
 
-    console.log(exception);
+    console.info(exception);
 
     const status =
       exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;

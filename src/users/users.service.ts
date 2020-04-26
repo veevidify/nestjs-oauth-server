@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
+import { classToPlain } from 'class-transformer';
 
 // services use external connectors (including db repository)
 // to fetch resource and parse them as typed entities
@@ -10,16 +11,19 @@ import { User } from 'src/entities/user.entity';
 export class UsersService {
   constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
 
-  public adminGetUsers(): Promise<User[]> {
-    return this.userRepository.find();
+  public async allUsers(): Promise<Partial<User>[]> {
+    const users = await this.userRepository.find();
+    return users.map(user => classToPlain(user));
   }
 
-  public adminGetIndividualUser(userId: string): Promise<User> {
-    return this.userRepository.findOneOrFail(userId);
+  public async getUser(userId: string): Promise<Partial<User>> {
+    const user = await this.userRepository.findOneOrFail(userId);
+    return classToPlain(user);
   }
 
-  public getUserByUsername(username: string): Promise<User> {
-    return this.userRepository.findOne({ where: { username } });
+  public async getUserByUsername(username: string): Promise<Partial<User>> {
+    const user = await this.userRepository.findOne({ where: { username } });
+    return classToPlain(user);
   }
 
   public async add(user: Partial<User>): Promise<User> {

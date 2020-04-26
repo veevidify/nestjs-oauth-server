@@ -17,7 +17,6 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req): Partial<User> {
-    console.log({ controller: req });
     return req.user;
   }
 }

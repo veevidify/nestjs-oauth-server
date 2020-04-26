@@ -13,7 +13,6 @@ export class RolesGuard implements CanActivate {
 
     const req = ctx.switchToHttp().getRequest();
 
-    console.log({ guard: req });
     const user: JwtAuthenticatable = req.user;
 
     return User.verifyRoles(user, allowedRoles);
