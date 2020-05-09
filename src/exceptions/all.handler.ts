@@ -4,7 +4,7 @@ import { Response } from 'express';
 
 @Catch()
 export class GeneralExceptionHandler extends BaseExceptionFilter {
-  public catch(exception: unknown, host: ArgumentsHost) {
+  public catch(exception: Error, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
 
@@ -14,7 +14,7 @@ export class GeneralExceptionHandler extends BaseExceptionFilter {
       exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     response.status(status).json({
-      message: 'Unknown Error',
+      message: exception.message || 'Unknown Error',
     });
   }
 }

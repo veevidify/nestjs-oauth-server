@@ -1,8 +1,12 @@
-import { Get, Controller, HttpCode, Param, Post, Body } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
 import * as bc from 'bcryptjs';
+import { Get, Controller, HttpCode, Param, Post, Body, UsePipes } from '@nestjs/common';
+
+import { UsersService } from 'src/users/users.service';
+import { ValidationPipe } from 'src/utils/validation.pipe';
 import { User } from 'src/entities/user.entity';
 import { RolesAuthorised } from 'src/auth/guards/decorators';
+
+import { CreateUserDto } from './interfaces';
 
 @Controller('users')
 export class UsersController {
@@ -23,11 +27,10 @@ export class UsersController {
   }
 
   @Post('/')
+  @UsePipes(new ValidationPipe())
   @RolesAuthorised(['admin'])
   @HttpCode(201)
-  public adminCreateUser(
-    @Body() body: { username: string; password: string; firstName: string; lastName: string },
-  ) {
+  public adminCreateUser(@Body() body: CreateUserDto) {
     const userDetails: Partial<User> = {
       ...body,
       password: bc.hashSync(body.password),

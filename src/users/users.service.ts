@@ -21,13 +21,14 @@ export class UsersService {
     return classToPlain(user);
   }
 
-  public async getUserByUsername(username: string): Promise<Partial<User>> {
+  public async getUserByUsername(username: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { username } });
-    return classToPlain(user);
+    return user;
   }
 
-  public async add(user: Partial<User>): Promise<User> {
-    return this.userRepository.save(user);
+  public async add(user: Partial<User>): Promise<Partial<User>> {
+    const newUser = this.userRepository.save(user);
+    return classToPlain(newUser);
   }
 
   public async remove(userId: string): Promise<void> {
