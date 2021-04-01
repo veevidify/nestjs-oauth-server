@@ -39,4 +39,8 @@ export class Client {
     eager: false,
   })
   authorizationCodes: AuthorizationCode[];
+
+  public static validateSecret = (client: Client, testSecret: string) => {
+    return (testSecret === client.clientSecret);
+  };
 }

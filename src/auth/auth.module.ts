@@ -7,6 +7,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { jwtConstants } from 'src/config/constants';
+import { ClientBasicStrategy } from './strategies/basic.strategy';
+import { ClientPasswordStrategy } from './strategies/client_password.strategy';
 
 @Module({
   imports: [
@@ -17,8 +19,8 @@ import { jwtConstants } from 'src/config/constants';
       signOptions: { expiresIn: '7d' },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, ClientBasicStrategy, ClientPasswordStrategy],
   exports: [AuthService],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class AuthModule { }

@@ -95,4 +95,11 @@ export class OAuthService {
 
     return done(null, token);
   };
+
+  // === //
+
+  public async getClientById(clientId: string): Promise<Client> {
+    const client = await this.clientRepository.findOne({ where: { clientId } });
+    return client;
+  }
 }
