@@ -6,9 +6,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Unique,
+  OneToMany,
 } from 'typeorm';
 import * as bc from 'bcryptjs';
 import { Exclude } from 'class-transformer';
+import { AuthorizationCode } from './authorization_code.entity';
 
 @Entity()
 @Unique(['id', 'username'])
@@ -39,6 +41,12 @@ export class User {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => AuthorizationCode, code => code.user, {
+    cascade: ['remove'],
+    eager: false,
+  })
+  authorizationCodes: AuthorizationCode[];
 
   public static validatePassword = (user: User, inputPassword: string) => {
     return bc.compareSync(inputPassword, user.password);
