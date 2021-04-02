@@ -12,6 +12,8 @@ import { Client } from 'src/entities/client.entity';
 import { Repository } from 'typeorm';
 import * as createCuid from 'cuid';
 import { User } from 'src/entities/user.entity';
+import { AccessToken } from 'src/entities/access_token.entity';
+import { AuthorizationCode } from 'src/entities/authorization_code.entity';
 
 interface GrantCodeAssoc {
   clientId: string;
@@ -27,12 +29,12 @@ interface AccessTokenAssoc {
 @Injectable()
 export class OAuthService {
   service = createOAuth2Service();
-  // TODO: persist code instead of using class prop
-  grantCodes: Record<string, GrantCodeAssoc> = {};
-  // TODO: persist token instead of using class prop
-  accessTokens: Record<string, AccessTokenAssoc> = {};
 
-  constructor(@InjectRepository(Client) private clientRepository: Repository<Client>) {
+  constructor(
+    @InjectRepository(Client) private clientRepository: Repository<Client>,
+    @InjectRepository(AuthorizationCode) private codeRepository: Repository<AuthorizationCode>,
+    @InjectRepository(AccessToken) private tokenRepository: Repository<AccessToken>,
+  ) {
     // register service methods
     this.service.serializeClient(this.clientSerialiser);
     this.service.deserializeClient(this.clientDeserialiser);
@@ -53,7 +55,7 @@ export class OAuthService {
     done(new UnauthorizedException('Invalid Client ID'));
   };
 
-  private clientCodeGenerator = (
+  private clientCodeGenerator = async (
     client: Client,
     redirectUri: string,
     user: User,
@@ -61,44 +63,53 @@ export class OAuthService {
     done: (err: Nullable<Error>, code: string) => void,
   ) => {
     const code = createCuid();
+    const authorizationCode = new AuthorizationCode();
+    authorizationCode.client = client;
+    authorizationCode.code = code;
+    authorizationCode.redirectUri = redirectUri;
+    authorizationCode.user = user;
 
-    this.grantCodes[code] = {
-      clientId: client.id,
-      redirectUri,
-      username: user.username,
-    };
+    const resultCode = this.codeRepository.create(authorizationCode);
+    await this.codeRepository.save(resultCode);
 
     return done(null, code);
   };
 
-  private codeTokenExchangeHelper = (client: Client, code: string, redirectUri: string, done: ExchangeDoneFunction) => {
-    const grantCode = this.grantCodes[code];
+  private codeTokenExchangeHelper = async (
+    client: Client,
+    code: string,
+    redirectUri: string,
+    done: ExchangeDoneFunction,
+  ) => {
+    const authorizationCode = await this.codeRepository.findOne({ where: { code } });
 
-    if (!grantCode) {
+    if (!authorizationCode) {
       return done(new UnauthorizedException('Invalid Grant Code'));
     }
 
-    if (client.id !== grantCode.clientId) {
+    if (client.id !== authorizationCode.client.id) {
       return done(new UnauthorizedException('Invalid Client ID'));
     }
 
-    if (redirectUri !== grantCode.redirectUri) {
+    if (redirectUri !== authorizationCode.redirectUri) {
       return done(new UnauthorizedException('Invalid Redirect URI'));
     }
 
     const token = createCuid();
+    const accessToken: Partial<AccessToken> = new AccessToken();
+    accessToken.token = token;
+    accessToken.client = client;
+    accessToken.user = authorizationCode.user;
 
-    this.accessTokens[token] = {
-      username: grantCode.username,
-      clientId: client.id,
-    };
+    const resultToken = this.tokenRepository.create(accessToken);
+    await this.tokenRepository.save(resultToken);
 
     return done(null, token);
   };
 
   // === //
 
-  public async getClientById(clientId: string): Promise<Client> {
+  public async getClientById(clientId: string): Promise<Client | null> {
     const client = await this.clientRepository.findOne({ where: { clientId } });
     return client;
   }

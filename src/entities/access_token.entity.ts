@@ -1,5 +1,6 @@
 import { Entity, Unique, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Client } from './client.entity';
+import { User } from './user.entity';
 
 @Entity()
 @Unique(['id'])
@@ -22,4 +23,9 @@ export class AccessToken {
     eager: true,
   })
   client: Client;
+
+  @ManyToOne(() => User, user => user.accessTokens, {
+    eager: true,
+  })
+  user: User;
 }

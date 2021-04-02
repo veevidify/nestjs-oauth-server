@@ -12,6 +12,9 @@ export class AuthorizationCode {
   code: string;
 
   @Column()
+  redirectUri: string;
+
+  @Column()
   @CreateDateColumn()
   createdAt: Date;
 
