@@ -63,14 +63,8 @@ export class OAuthService {
     done: (err: Nullable<Error>, code: string) => void,
   ) => {
     const code = createCuid();
-    const authorizationCode = new AuthorizationCode();
-    authorizationCode.client = client;
-    authorizationCode.code = code;
-    authorizationCode.redirectUri = redirectUri;
-    authorizationCode.user = user;
 
-    const resultCode = this.codeRepository.create(authorizationCode);
-    await this.codeRepository.save(resultCode);
+    await this.createAuthorizationCode(code, redirectUri, client, user);
 
     return done(null, code);
   };
@@ -96,18 +90,41 @@ export class OAuthService {
     }
 
     const token = createCuid();
+    await this.createAccessToken(token, client, authorizationCode);
+
+    return done(null, token);
+  };
+
+  // === //
+  public async createAuthorizationCode(
+    code: string,
+    redirectUri: string,
+    client: Client,
+    user: User
+  ): Promise<AuthorizationCode | null> {
+    const authorizationCode = new AuthorizationCode();
+    authorizationCode.client = client;
+    authorizationCode.code = code;
+    authorizationCode.redirectUri = redirectUri;
+    authorizationCode.user = user;
+
+    const resultCode = this.codeRepository.create(authorizationCode);
+    return await this.codeRepository.save(resultCode);
+  }
+
+  public async createAccessToken(
+    token: string,
+    client: Client,
+    authorizationCode: AuthorizationCode
+  ): Promise<AccessToken | null> {
     const accessToken: Partial<AccessToken> = new AccessToken();
     accessToken.token = token;
     accessToken.client = client;
     accessToken.user = authorizationCode.user;
 
     const resultToken = this.tokenRepository.create(accessToken);
-    await this.tokenRepository.save(resultToken);
-
-    return done(null, token);
-  };
-
-  // === //
+    return await this.tokenRepository.save(resultToken);
+  }
 
   public async getClientById(clientId: string): Promise<Client | null> {
     const client = await this.clientRepository.findOne({ where: { clientId } });
