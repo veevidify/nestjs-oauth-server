@@ -9,11 +9,13 @@ import { UsersModule } from 'src/users/users.module';
 import { jwtConstants } from 'src/config/constants';
 import { ClientBasicStrategy } from './strategies/basic.strategy';
 import { ClientPasswordStrategy } from './strategies/client_password.strategy';
+import { OAuthModule } from './oauth/oauth.module';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
+    OAuthModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7d' },

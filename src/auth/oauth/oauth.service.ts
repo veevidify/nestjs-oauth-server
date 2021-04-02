@@ -113,4 +113,9 @@ export class OAuthService {
     const client = await this.clientRepository.findOne({ where: { clientId } });
     return client;
   }
+
+  public async findAccessToken(token: string): Promise<AccessToken | null> {
+    const accessToken = await this.tokenRepository.findOne({ where: { token } });
+    return accessToken;
+  }
 }
