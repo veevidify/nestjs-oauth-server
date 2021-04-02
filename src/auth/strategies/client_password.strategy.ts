@@ -4,10 +4,12 @@ import { Strategy as PassportClientPasswordStrategy } from 'passport-oauth2-clie
 import { AuthService } from 'src/auth/auth.service';
 import { Client } from 'src/entities/client.entity';
 
+import { oauth } from 'src/config/constants';
+
 // rely on services to provide necessary output
 // effectful functions / throw exceptions
 @Injectable()
-export class ClientPasswordStrategy extends PassportStrategy(PassportClientPasswordStrategy) {
+export class ClientPasswordStrategy extends PassportStrategy(PassportClientPasswordStrategy, oauth.STRATEGY_CLIENT_PASSWORD) {
   constructor(private authService: AuthService) {
     super();
   }

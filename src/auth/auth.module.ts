@@ -18,7 +18,7 @@ import { BearerStrategy } from './strategies/bearer.strategy';
     PassportModule,
     OAuthModule,
     JwtModule.register({
-      secret: jwtConstants.secret,
+      secret: jwtConstants.SECRET,
       signOptions: { expiresIn: '7d' },
     }),
   ],
