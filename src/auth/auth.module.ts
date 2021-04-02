@@ -10,6 +10,7 @@ import { jwtConstants } from 'src/config/constants';
 import { ClientBasicStrategy } from './strategies/basic.strategy';
 import { ClientPasswordStrategy } from './strategies/client_password.strategy';
 import { OAuthModule } from './oauth/oauth.module';
+import { BearerStrategy } from './strategies/bearer.strategy';
 
 @Module({
   imports: [
@@ -21,7 +22,14 @@ import { OAuthModule } from './oauth/oauth.module';
       signOptions: { expiresIn: '7d' },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, ClientBasicStrategy, ClientPasswordStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    ClientBasicStrategy,
+    ClientPasswordStrategy,
+    BearerStrategy,
+  ],
   exports: [AuthService],
   controllers: [AuthController],
 })
