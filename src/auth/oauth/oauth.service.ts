@@ -14,6 +14,7 @@ import * as createCuid from 'cuid';
 import { User } from 'src/entities/user.entity';
 import { AccessToken } from 'src/entities/access_token.entity';
 import { AuthorizationCode } from 'src/entities/authorization_code.entity';
+import { Nullable } from 'src/utils/types';
 
 interface GrantCodeAssoc {
   clientId: string;

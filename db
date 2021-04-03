@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker exec -it svc_db bash -c "psql --user dev -p5432 --password dev dev"
+

@@ -1,7 +1,4 @@
-declare global {
-  type Nullable<T> = T | null;
-  type GObject = { [key: string]: any };
-}
+import { GObject } from './types';
 
 export const toUnixTime = (timeString: string) => {
   let unixTime = Date.parse(timeString);
