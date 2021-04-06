@@ -4,6 +4,6 @@ export const jwtConstants = {
 
 export const oauth = {
   STRATEGY_BASIC: 'oauth-basic',
-  STRATEGY_CLIENT_PASSWORD: 'oauth-client-password',
+  STRATEGY_CLIENT_PASSWORD: 'oauth2-client-password',
   STRATEGY_BEARER: 'oauth-bearer',
 };

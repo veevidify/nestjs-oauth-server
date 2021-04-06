@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
-import { JwtAuthenticatable } from 'src/auth/interface';
+import { JwtAuthenticatable } from 'src/auth/interfaces';
 import { User } from 'src/entities/user.entity';
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { JwtAuthenticatable } from 'src/auth/interface';
+import { JwtAuthenticatable } from 'src/auth/interfaces';
 /* eslint-disable @typescript-eslint/camelcase */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';

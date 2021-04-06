@@ -1,4 +1,4 @@
-import { JwtAuthenticatable } from 'src/auth/interface';
+import { JwtAuthenticatable } from 'src/auth/interfaces';
 import {
   Entity,
   PrimaryGeneratedColumn,
