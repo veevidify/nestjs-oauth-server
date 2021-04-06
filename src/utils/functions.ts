@@ -1,3 +1,5 @@
+import * as crypto from 'crypto';
+
 import { GObject } from './types';
 
 export const toUnixTime = (timeString: string) => {
@@ -76,3 +78,13 @@ export const omit = <T extends GObject>(obj: T) => (...args: (keyof T)[]): Parti
 export const revStr = (str: string) => str.split('').reduceRight((s, c) => s + c, '');
 export const mapTrue = (_: any) => true;
 export const mapFalse = (_: any) => false;
+
+export const generateCode = () => {
+    const seed = crypto.randomBytes(256);
+    const code = crypto
+      .createHash('sha1')
+      .update(seed)
+      .digest('hex');
+
+    return code;
+};

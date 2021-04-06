@@ -2,9 +2,11 @@ import { Entity, Unique, PrimaryGeneratedColumn, Column, CreateDateColumn, Updat
 import { AccessToken } from './access_token.entity';
 import { AuthorizationCode } from './authorization_code.entity';
 
+import * as OAuth from 'oauth2-server';
+
 @Entity()
 @Unique(['id', 'clientId'])
-export class Client {
+export class Client implements OAuth.Client {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -18,11 +20,20 @@ export class Client {
   @Column()
   clientSecret: string;
 
-  @Column({ type: 'text', array: true, default: '{ user }' })
+  @Column({ type: 'text', array: true, default: '{}' })
   redirectUris: string[];
 
   @Column()
   isTrusted: boolean;
+
+  @Column({ type: 'text', array: true, default: '{}' })
+  grants: string[];
+
+  @Column({ default: 3600 })
+  accessTokenLifetime?: number;
+
+  @Column({ default: 3600 })
+  refreshTokenLifetime?: number;
 
   @Column()
   @CreateDateColumn()

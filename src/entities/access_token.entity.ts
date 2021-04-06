@@ -10,14 +10,28 @@ import {
 import { Client } from './client.entity';
 import { User } from './user.entity';
 
+import * as OAuth from 'oauth2-server';
+
 @Entity()
 @Unique(['id'])
-export class AccessToken {
+export class AccessToken implements OAuth.Token {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  token: string;
+  accessToken: string;
+
+  @Column({ default: new Date() })
+  accessTokenExpiresAt?: Date;
+
+  @Column({ default: null })
+  refreshToken?: string;
+
+  @Column({ default: null })
+  refreshTokenExpiresAt?: Date;
+
+  @Column({ type: 'text', array: true, default: '{*}' })
+  scope?: string[];
 
   @Column()
   @CreateDateColumn()

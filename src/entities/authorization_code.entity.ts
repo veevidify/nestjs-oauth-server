@@ -9,10 +9,16 @@ export class AuthorizationCode {
   id: string;
 
   @Column()
-  code: string;
+  authorizationCode: string;
+
+  @Column()
+  expiresAt: Date;
 
   @Column()
   redirectUri: string;
+
+  @Column({ type: 'text', array: true, default: '{*}' })
+  scope?: string[];
 
   @Column()
   @CreateDateColumn()
