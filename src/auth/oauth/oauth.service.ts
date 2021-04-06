@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import {
-  createServer as createOAuth2Service,
+  createServer as createOAuth2Provider,
   grant as OAuth2Grant,
   exchange as OAuth2Exchange,
   SerializeClientDoneFunction,
@@ -23,7 +23,7 @@ type IssueGrantTokenDoneFunction = (err: Error | null, token?: string, params?: 
 
 @Injectable()
 export class OAuthService {
-  service = createOAuth2Service();
+  provider = createOAuth2Provider();
 
   // === initialise oauth2orize === //
 
@@ -36,18 +36,18 @@ export class OAuthService {
     private userService: UsersService,
   ) {
     // register service methods
-    this.service.serializeClient(this.clientSerialiser);
-    this.service.deserializeClient(this.clientDeserialiser);
+    this.provider.serializeClient(this.clientSerialiser);
+    this.provider.deserializeClient(this.clientDeserialiser);
 
     // grant types
-    this.service.grant(OAuth2Grant.code(this.authorizationCodeGrant));
-    this.service.grant(OAuth2Grant.token(this.implicitGrant));
+    this.provider.grant(OAuth2Grant.code(this.authorizationCodeGrant));
+    this.provider.grant(OAuth2Grant.token(this.implicitGrant));
 
     // tokens exchange
-    this.service.exchange(OAuth2Exchange.code(this.codeTokenExchange));
-    this.service.exchange(OAuth2Exchange.password(this.usernamePasswordTokenExchange));
-    this.service.exchange(OAuth2Exchange.clientCredentials(this.clientIdSecretTokenExchange));
-    this.service.exchange(OAuth2Exchange.refreshToken(this.refreshToken));
+    this.provider.exchange(OAuth2Exchange.code(this.codeTokenExchange));
+    this.provider.exchange(OAuth2Exchange.password(this.usernamePasswordTokenExchange));
+    this.provider.exchange(OAuth2Exchange.clientCredentials(this.clientIdSecretTokenExchange));
+    this.provider.exchange(OAuth2Exchange.refreshToken(this.refreshToken));
   }
 
   // == client serialiser & deserialiser
@@ -67,12 +67,12 @@ export class OAuthService {
   };
 
   private clientDeserialiser = async (clientId: string, done: DeserializeClientDoneFunction) => {
-    const client = await this.clientRepository.findOneOrFail(clientId);
-    if (clientId === client.id) {
-      done(null, client);
+    const client = await this.clientRepository.findOne(clientId);
+    if (client === null || (client && clientId !== client.id)) {
+      done(new UnauthorizedException('Invalid Client'));
     }
 
-    done(new UnauthorizedException('Invalid Client ID'));
+    done(null, client);
   };
 
   // create access token & refresh token
@@ -162,12 +162,14 @@ export class OAuthService {
   ) => {
     const authorizationCode = await this.codeRepository.findOne({ where: { code } });
 
+    console.log({ client, code, redirectUri });
+
     if (!authorizationCode) {
       return done(new UnauthorizedException('Invalid Grant Code'));
     }
 
-    if (client.id !== authorizationCode.client.id) {
-      return done(new UnauthorizedException('Invalid Client ID'));
+    if (!client || (client && client.id !== authorizationCode.client.id)) {
+      return done(new UnauthorizedException('Invalid Client'));
     }
 
     if (redirectUri !== authorizationCode.redirectUri) {
@@ -203,7 +205,7 @@ export class OAuthService {
         this.validateClient(client.clientId, client.clientSecret),
       ]);
       if (!user || !client) {
-        return done(null, false, null, {});
+        return done(new UnauthorizedException('Invalid User or Client'), false, null, {});
       }
 
       const { accessToken, refreshToken } = await this.issueTokenPair(user.id, dbClient.id);
@@ -220,7 +222,7 @@ export class OAuthService {
   // application issues an access token on behalf of the client who authorized the code.
   // constructor => oauth2orize.exchange.clientCredentials callback
   // CURRENTLY UNSUPPORTED. If support, token entities need to be refactored to relate optionally to User
-  private clientIdSecretTokenExchange = async () => {};
+  private clientIdSecretTokenExchange = async () => { };
 
   // Exchange refresh token with a new pair of Access token and Refresh token
   // issue new tokens and remove the old ones
@@ -233,7 +235,7 @@ export class OAuthService {
       ]);
 
       if (refreshToken === null || dbClient === null) {
-        return done(null, false, null, {});
+        return done(new UnauthorizedException('Invalid Token'), false, null, {});
       }
 
       const user = refreshToken.user;
@@ -310,6 +312,17 @@ export class OAuthService {
 
   public async findAccessToken(token: string): Promise<AccessToken | null> {
     const accessToken = await this.accessTokenRepository.findOne({ where: { token } });
+    return accessToken;
+  }
+
+  public async findAccessTokenByUserAndClient(user: User, client: Client): Promise<AccessToken | null> {
+    const accessToken = await this.accessTokenRepository.findOne({
+      where: {
+        userId: user.id,
+        clientId: client.id,
+      },
+    });
+
     return accessToken;
   }
 

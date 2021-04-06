@@ -14,8 +14,12 @@ export class Client {
   @Column()
   clientId: string;
 
+  // TODO: hash
   @Column()
   clientSecret: string;
+
+  @Column({ type: 'text', array: true, default: '{ user }' })
+  redirectUris: string[];
 
   @Column()
   isTrusted: boolean;
@@ -40,6 +44,7 @@ export class Client {
   })
   authorizationCodes: AuthorizationCode[];
 
+  // TODO: hash
   public static validateSecret = (client: Client, testSecret: string) => {
     return (testSecret === client.clientSecret);
   };

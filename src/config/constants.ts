@@ -7,3 +7,7 @@ export const oauth = {
   STRATEGY_CLIENT_PASSWORD: 'oauth2-client-password',
   STRATEGY_BEARER: 'oauth-bearer',
 };
+
+export const web = {
+  SESSION_SECRET: process.env.SESSION_SECRET || 'secretKey'
+};
