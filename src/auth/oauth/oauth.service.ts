@@ -257,7 +257,7 @@ export class OAuthService {
 
   // === end initialise oauth2orize === //
 
-  // === method for oauth controllers token exchange === //
+  // === repository wrappers === //
 
   public async createAuthorizationCode(
     code: string,
@@ -361,5 +361,5 @@ export class OAuthService {
     return null;
   }
 
-  // === end method for oauth controllers token exchange === //
+  // === end repository wrappers === //
 }
