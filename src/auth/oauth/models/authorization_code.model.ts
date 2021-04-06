@@ -16,33 +16,39 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
    * Invoked to generate a new access token.
    *
    */
-  generateAccessToken?(
+  generateAccessToken = async (
     client: Client,
     user: User,
     scope: string | string[],
     callback?: Callback<string>,
-  ): Promise<string>;
+  ): Promise<string> => {
+    return '';
+  };
 
   /**
    * Invoked to retrieve a client using a client id or a client id/client secret combination, depending on the grant type.
    *
    */
-  getClient = (
+  getClient = async (
     clientId: string,
     clientSecret: string,
     callback?: Callback<Client | Falsey>,
-  ): Promise<Client | Falsey> => {};
+  ): Promise<Client | Falsey> => {
+    return false;
+  };
 
   /**
    * Invoked to save an access token and optionally a refresh token, depending on the grant type.
    *
    */
-  saveToken = (
+  saveToken = async (
     token: AccessToken,
     client: Client,
     user: User,
     callback?: Callback<AccessToken>,
-  ): Promise<AccessToken | Falsey> => {};
+  ): Promise<AccessToken | Falsey> => {
+    return false;
+  };
 
   /**
    * Invoked to generate a new refresh token.
@@ -54,67 +60,79 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
     scope: string | string[],
     callback?: Callback<string>,
   ): Promise<string> => {
-    return 'generateRefreshToken';
+    return '';
   };
 
   /**
    * Invoked to generate a new authorization code.
    *
    */
-  generateAuthorizationCode?(
+  generateAuthorizationCode = async (
     client: Client,
     user: User,
     scope: string | string[],
     callback?: Callback<string>,
-  ): Promise<string>;
+  ): Promise<string> => {
+    return '';
+  };
 
   /**
    * Invoked to retrieve an existing authorization code previously saved through Model#saveAuthorizationCode().
    *
    */
-  getAuthorizationCode = (
+  getAuthorizationCode = async (
     authorizationCode: string,
     callback?: Callback<AuthorizationCode>,
-  ): Promise<AuthorizationCode | Falsey> => {};
+  ): Promise<AuthorizationCode | Falsey> => {
+    return false;
+  };
 
   /**
    * Invoked to save an authorization code.
    *
    */
-  saveAuthorizationCode = (
+  saveAuthorizationCode = async (
     code: Pick<AuthorizationCode, 'authorizationCode' | 'expiresAt' | 'redirectUri' | 'scope'>,
     client: Client,
     user: User,
     callback?: Callback<AuthorizationCode>,
-  ): Promise<AuthorizationCode | Falsey> => {};
+  ): Promise<AuthorizationCode | Falsey> => {
+    return false;
+  };
 
   /**
    * Invoked to revoke an authorization code.
    *
    */
-  revokeAuthorizationCode = (
+  revokeAuthorizationCode = async (
     code: AuthorizationCode,
     callback?: Callback<boolean>,
-  ): Promise<boolean> => {};
+  ): Promise<boolean> => {
+    return false;
+  };
 
   /**
    * Invoked to retrieve an existing access token previously saved through Model#saveToken().
    *
    */
-  getAccessToken = (
+  getAccessToken = async (
     accessToken: string,
     callback?: Callback<AccessToken>,
-  ): Promise<Token | Falsey> => {};
+  ): Promise<AccessToken | Falsey> => {
+    return false;
+  };
 
   /**
    * Invoked during request authentication to check if the provided access token was authorized the requested scopes.
    *
    */
-  verifyScope = (
+  verifyScope = async (
     token: AccessToken,
     scope: string | string[],
     callback?: Callback<boolean>,
-  ): Promise<boolean> => {};
+  ): Promise<boolean> => {
+    return false;
+  };
 
   /**
    * Invoked to check if the requested scope is valid for a particular client/user combination.
@@ -125,5 +143,7 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
     client: Client,
     scope: string | string[],
     callback?: Callback<string | Falsey>,
-  ): Promise<string | string[] | Falsey> => {};
+  ): Promise<string | string[] | Falsey> => {
+    return false;
+  };
 }

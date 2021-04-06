@@ -28,7 +28,7 @@ export class OAuthService {
   ): AuthorizationCode {
     const authorizationCode = new AuthorizationCode();
     authorizationCode.client = client;
-    authorizationCode.code = code;
+    authorizationCode.authorizationCode = code;
     authorizationCode.redirectUri = redirectUri;
     authorizationCode.user = user;
 
@@ -37,13 +37,9 @@ export class OAuthService {
     return resultCode;
   }
 
-  public createAccessToken(
-    token: string,
-    client: Client,
-    user: User,
-  ): AccessToken {
+  public createAccessToken(token: string, client: Client, user: User): AccessToken {
     const payload: Partial<AccessToken> = new AccessToken();
-    payload.token = token;
+    payload.accessToken = token;
     payload.client = client;
     payload.user = user;
 
@@ -89,7 +85,7 @@ export class OAuthService {
 
   // == requires overlapping functions with authService to support password grant
   public async validateUser(username: string, password: string): Promise<Partial<User> | null> {
-    const user = await this.userRepository.findOne({ where: { username }});
+    const user = await this.userRepository.findOne({ where: { username } });
 
     if (user && User.validatePassword(user, password)) {
       return classToPlain(user);
