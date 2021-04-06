@@ -26,8 +26,7 @@ export class OAuthModule {
 
   private validate: ValidateFunction = async (clientId, redirectUri, done) => {
     try {
-      const client = await this.oauthService.getClientById(clientId);
-      console.log({ client, redirectUri });
+      const client = await this.oauthService.getClientByClientId(clientId);
       if (client === null || !client.redirectUris.includes(redirectUri)) {
         return done(new UnauthorizedException('Invalid Client'));
       }

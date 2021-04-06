@@ -13,8 +13,8 @@ import { Repository } from 'typeorm';
 import * as createCuid from 'cuid';
 import { User } from 'src/entities/user.entity';
 import { AccessToken } from 'src/entities/access_token.entity';
-import { AuthorizationCode } from 'src/entities/authorization_code.entity';
 import { RefreshToken } from 'src/entities/refresh_token.entity';
+import { AuthorizationCode } from 'src/entities/authorization_code.entity';
 import { UsersService } from 'src/users/users.service';
 import { classToPlain } from 'class-transformer';
 
@@ -63,29 +63,31 @@ export class OAuthService {
   // simple matter of serializing the client's ID, and deserializing by finding
   // the client by ID from the database.
   private clientSerialiser = (client: Client, done: SerializeClientDoneFunction) => {
-    done(null, client.clientId);
+    console.log('== Serialising into session', { client });
+    return done(null, client.clientId);
   };
 
   private clientDeserialiser = async (clientId: string, done: DeserializeClientDoneFunction) => {
-    const client = await this.clientRepository.findOne(clientId);
-    if (client === null || (client && clientId !== client.id)) {
-      done(new UnauthorizedException('Invalid Client'));
+    console.log('== Deserialising from session', { clientId });
+    const client = await this.getClientByClientId(clientId);
+    if (client === null || (client && clientId !== client.clientId)) {
+      return done(new UnauthorizedException('Invalid Client'));
     }
 
-    done(null, client);
+    return done(null, client);
   };
 
   // create access token & refresh token
   private async issueTokenPair(userId: string, clientId: string) {
     const [user, client] = await Promise.all([
       this.userRepository.findOne(userId),
-      this.clientRepository.findOne(clientId),
+      this.getClientByClientId(clientId),
     ]);
 
     const accessTokenString = createCuid();
     const refreshTokenString = createCuid();
 
-    const [accessToken, refreshToken] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all<AccessToken, RefreshToken>([
       this.createAccessToken(accessTokenString, client, user),
       this.createRefreshToken(refreshTokenString, client, user),
     ]);
@@ -137,9 +139,9 @@ export class OAuthService {
     done: IssueGrantTokenDoneFunction,
   ) => {
     try {
-      const { refreshToken } = await this.issueTokenPair(user.id, client.id);
+      const { accessToken } = await this.issueTokenPair(user.id, client.clientId);
       const params = { username: user.username };
-      return done(null, refreshToken.token, params);
+      return done(null, accessToken.token, params);
     } catch (err) {
       done(err, null);
     }
@@ -168,7 +170,7 @@ export class OAuthService {
       return done(new UnauthorizedException('Invalid Grant Code'));
     }
 
-    if (!client || (client && client.id !== authorizationCode.client.id)) {
+    if (!client || (client && client.clientId !== authorizationCode.client.clientId)) {
       return done(new UnauthorizedException('Invalid Client'));
     }
 
@@ -179,7 +181,7 @@ export class OAuthService {
     try {
       const { accessToken, refreshToken, user } = await this.issueTokenPair(
         authorizationCode.user.id,
-        client.id,
+        client.clientId,
       );
       const params = { username: user.username };
       return done(null, accessToken.token, refreshToken.token, params);
@@ -208,7 +210,7 @@ export class OAuthService {
         return done(new UnauthorizedException('Invalid User or Client'), false, null, {});
       }
 
-      const { accessToken, refreshToken } = await this.issueTokenPair(user.id, dbClient.id);
+      const { accessToken, refreshToken } = await this.issueTokenPair(user.id, dbClient.clientId);
       const params = { username: user.username };
       return done(null, accessToken.token, refreshToken.token, params);
     } catch (err) {
@@ -242,7 +244,7 @@ export class OAuthService {
       const {
         accessToken: newAccessToken,
         refreshToken: newRefreshToken,
-      } = await this.issueTokenPair(user.id, client.id);
+      } = await this.issueTokenPair(user.id, client.clientId);
 
       // remove existings
       await Promise.all([
@@ -296,7 +298,7 @@ export class OAuthService {
     client: Client,
     user: User,
   ): Promise<RefreshToken | null> {
-    const refreshToken: Partial<AccessToken> = new AccessToken();
+    const refreshToken: Partial<RefreshToken> = new RefreshToken();
     refreshToken.token = token;
     refreshToken.client = client;
     refreshToken.user = user;
@@ -305,7 +307,7 @@ export class OAuthService {
     return await this.refreshTokenRepository.save(resultToken);
   }
 
-  public async getClientById(clientId: string): Promise<Client | null> {
+  public async getClientByClientId(clientId: string): Promise<Client | null> {
     const client = await this.clientRepository.findOne({ where: { clientId } });
     return client;
   }
@@ -365,7 +367,7 @@ export class OAuthService {
   }
 
   async validateClient(clientId: string, clientSecret: string): Promise<Client | null> {
-    const client = await this.getClientById(clientId);
+    const client = await this.getClientByClientId(clientId);
 
     if (client && Client.validateSecret(client, clientSecret)) {
       return client;

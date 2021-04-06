@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   async validateClient(clientId: string, clientSecret: string): Promise<Client | null> {
-    const client = await this.oauthService.getClientById(clientId);
+    const client = await this.oauthService.getClientByClientId(clientId);
 
     if (client && Client.validateSecret(client, clientSecret)) {
       return client;
