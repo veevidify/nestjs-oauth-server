@@ -40,8 +40,11 @@ export function compose(...fns: Function[]) {
   return (args: any[]) => fns.reduceRight((agg, f) => f(agg), args);
 }
 
-export const flatMap = <T = any, U = any>(arr: T[], fn: (arg: T) => U[]): U[] =>
-  arr.reduce((agg, c) => agg.concat([...fn(c)]), [] as U[]);
+export const flatMap = <T = any, U = any>(arr: T[], fn: (arg: T) => U[] | U): U[] =>
+  arr.reduce((agg, c) => {
+    const next = fn(c);
+    return Array.isArray(next) ? agg.concat([...next]) : agg.concat(next);
+  }, [] as U[]);
 
 export const concat = <T = any>(l: T[], r: T[]) => l.concat(r);
 
@@ -79,12 +82,14 @@ export const revStr = (str: string) => str.split('').reduceRight((s, c) => s + c
 export const mapTrue = (_: any) => true;
 export const mapFalse = (_: any) => false;
 
-export const generateCode = () => {
-    const seed = crypto.randomBytes(256);
-    const code = crypto
-      .createHash('sha1')
-      .update(seed)
-      .digest('hex');
+export const boolifyPromise = <R = any>(p: Promise<R>) => p.then(mapTrue).catch(mapFalse) ;
 
-    return code;
+export const generateCode = () => {
+  const seed = crypto.randomBytes(256);
+  const code = crypto
+    .createHash('sha1')
+    .update(seed)
+    .digest('hex');
+
+  return code;
 };

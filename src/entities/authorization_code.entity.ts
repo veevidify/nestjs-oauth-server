@@ -2,9 +2,11 @@ import { Entity, Unique, PrimaryGeneratedColumn, Column, CreateDateColumn, Updat
 import { Client } from './client.entity';
 import { User } from './user.entity';
 
+import * as OAuth from 'oauth2-server';
+
 @Entity()
 @Unique(['id'])
-export class AuthorizationCode {
+export class AuthorizationCode implements OAuth.AuthorizationCode {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -6,6 +6,10 @@ import { User } from 'src/entities/user.entity';
 import { AccessToken } from 'src/entities/access_token.entity';
 import { AuthorizationCode } from 'src/entities/authorization_code.entity';
 import { classToPlain } from 'class-transformer';
+import * as createCuid from 'cuid';
+import { addDays } from 'date-fns';
+import { generateCode } from 'src/utils/functions';
+import { AuthorizationCodeProvider } from './providers/authorization_code.provider';
 
 @Injectable()
 export class OAuthService {
@@ -14,43 +18,68 @@ export class OAuthService {
     @InjectRepository(Client) private clientRepository: Repository<Client>,
     @InjectRepository(AuthorizationCode) private codeRepository: Repository<AuthorizationCode>,
     @InjectRepository(AccessToken) private accessTokenRepository: Repository<AccessToken>,
-  ) {
-    // register service methods
-  }
+  ) { }
 
   // === repository wrappers === //
 
   public createAuthorizationCode(
-    code: string,
     redirectUri: string,
-    client: Client,
-    user: User,
+    scope: string[],
+    client?: Client,
+    user?: User,
   ): AuthorizationCode {
     const authorizationCode = new AuthorizationCode();
-    authorizationCode.client = client;
-    authorizationCode.authorizationCode = code;
+    authorizationCode.authorizationCode = generateCode();
     authorizationCode.redirectUri = redirectUri;
+    authorizationCode.scope = scope;
+    authorizationCode.client = client;
     authorizationCode.user = user;
 
-    const resultCode = this.codeRepository.create(authorizationCode);
-    // return await this.codeRepository.save(resultCode);
-    return resultCode;
+    return this.codeRepository.create(authorizationCode);
   }
 
-  public createAccessToken(token: string, client: Client, user: User): AccessToken {
+  public async persistAuthorizationCode(
+    authorizationCode: Partial<AuthorizationCode>,
+    client?: Client,
+    user?: User,
+  ): Promise<AuthorizationCode | null> {
+    authorizationCode.client = client;
+    authorizationCode.user = user;
+
+    return await this.codeRepository.save(authorizationCode);
+  }
+
+  public createAccessToken(scopes: string[], client?: Client, user?: User): AccessToken {
     const payload: Partial<AccessToken> = new AccessToken();
-    payload.accessToken = token;
+    payload.accessToken = createCuid();
+    payload.accessTokenExpiresAt = addDays(new Date(), 7);
+    payload.refreshToken = createCuid();
+    payload.refreshTokenExpiresAt = addDays(new Date(), 14);
+    payload.scope = scopes;
     payload.client = client;
     payload.user = user;
 
-    const accessToken = this.accessTokenRepository.create(payload);
-    // return await this.accessTokenRepository.save(accessToken);
-    return accessToken;
+    return this.accessTokenRepository.create(payload);
+  }
+
+ public async persistAccessToken(
+   accessToken: Partial<AccessToken>,
+   user?: User,
+   client?: Client,
+  ): Promise<AccessToken | null> {
+    accessToken.client = client;
+    accessToken.user = user;
+    return await this.accessTokenRepository.save(accessToken);
   }
 
   public async getClientByClientId(clientId: string): Promise<Client | null> {
     const client = await this.clientRepository.findOne({ where: { clientId } });
     return client;
+  }
+
+  public async findAuthorizationCode(authorizationCode: string): Promise<AuthorizationCode | null> {
+    const code = await this.codeRepository.findOne({ where: { authorizationCode } });
+    return code;
   }
 
   public async findAccessToken(token: string): Promise<AccessToken | null> {
@@ -70,6 +99,10 @@ export class OAuthService {
     });
 
     return accessToken;
+  }
+
+  public async removeAuthorizationCode(code: AuthorizationCode) {
+    return await this.codeRepository.delete(code.id);
   }
 
   public async removeAccessTokens(user: User, client: Client) {

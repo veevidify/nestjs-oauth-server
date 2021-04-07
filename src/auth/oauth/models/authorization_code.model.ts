@@ -7,6 +7,7 @@ import { User } from 'src/entities/user.entity';
 import { Callback, Falsey } from 'src/utils/types';
 import { AccessToken } from 'src/entities/access_token.entity';
 import { AuthorizationCode } from 'src/entities/authorization_code.entity';
+import { flatMap, boolifyPromise, id } from 'src/utils/functions';
 
 @Injectable()
 export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeModel {
@@ -20,9 +21,11 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
     client: Client,
     user: User,
     scope: string | string[],
-    callback?: Callback<string>,
+    _callback?: Callback<string>,
   ): Promise<string> => {
-    return '';
+    const scopes = flatMap([scope], id);
+    const accessToken = this.oauthService.createAccessToken(scopes, client, user);
+    return accessToken.accessToken;
   };
 
   /**
@@ -32,9 +35,9 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
   getClient = async (
     clientId: string,
     clientSecret: string,
-    callback?: Callback<Client | Falsey>,
+    _callback?: Callback<Client | Falsey>,
   ): Promise<Client | Falsey> => {
-    return false;
+    return this.oauthService.validateClient(clientId, clientSecret);
   };
 
   /**
@@ -45,22 +48,9 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
     token: AccessToken,
     client: Client,
     user: User,
-    callback?: Callback<AccessToken>,
+    _callback?: Callback<AccessToken>,
   ): Promise<AccessToken | Falsey> => {
-    return false;
-  };
-
-  /**
-   * Invoked to generate a new refresh token.
-   *
-   */
-  generateRefreshToken = async (
-    client: Client,
-    user: User,
-    scope: string | string[],
-    callback?: Callback<string>,
-  ): Promise<string> => {
-    return '';
+    return this.oauthService.persistAccessToken(token, user, client);
   };
 
   /**
@@ -71,9 +61,16 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
     client: Client,
     user: User,
     scope: string | string[],
-    callback?: Callback<string>,
+    _callback?: Callback<string>,
   ): Promise<string> => {
-    return '';
+    const scopes = flatMap([scope], id);
+    const authorizationCode = this.oauthService.createAuthorizationCode(
+      client.redirectUris[0] ?? '',
+      scopes,
+      client,
+      user,
+    );
+    return authorizationCode.authorizationCode;
   };
 
   /**
@@ -82,9 +79,9 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
    */
   getAuthorizationCode = async (
     authorizationCode: string,
-    callback?: Callback<AuthorizationCode>,
+    _callback?: Callback<AuthorizationCode>,
   ): Promise<AuthorizationCode | Falsey> => {
-    return false;
+    return this.oauthService.findAuthorizationCode(authorizationCode);
   };
 
   /**
@@ -95,9 +92,9 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
     code: Pick<AuthorizationCode, 'authorizationCode' | 'expiresAt' | 'redirectUri' | 'scope'>,
     client: Client,
     user: User,
-    callback?: Callback<AuthorizationCode>,
+    _callback?: Callback<AuthorizationCode>,
   ): Promise<AuthorizationCode | Falsey> => {
-    return false;
+    return this.oauthService.persistAuthorizationCode(code, client, user);
   };
 
   /**
@@ -106,9 +103,9 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
    */
   revokeAuthorizationCode = async (
     code: AuthorizationCode,
-    callback?: Callback<boolean>,
+    _callback?: Callback<boolean>,
   ): Promise<boolean> => {
-    return false;
+    return boolifyPromise(this.oauthService.removeAuthorizationCode(code));
   };
 
   /**
@@ -117,9 +114,9 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
    */
   getAccessToken = async (
     accessToken: string,
-    callback?: Callback<AccessToken>,
+    _callback?: Callback<AccessToken>,
   ): Promise<AccessToken | Falsey> => {
-    return false;
+    return this.oauthService.findAccessToken(accessToken);
   };
 
   /**
@@ -129,9 +126,9 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
   verifyScope = async (
     token: AccessToken,
     scope: string | string[],
-    callback?: Callback<boolean>,
+    _callback?: Callback<boolean>,
   ): Promise<boolean> => {
-    return false;
+    return flatMap([scope], id).every(s => token.scope.includes(s));
   };
 
   /**
@@ -142,8 +139,12 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
     user: User,
     client: Client,
     scope: string | string[],
-    callback?: Callback<string | Falsey>,
+    _callback?: Callback<string | Falsey>,
   ): Promise<string | string[] | Falsey> => {
-    return false;
+    const scopes = flatMap([scope], id);
+    if (scopes.includes('admin'))
+      return false;
+
+    return scope;
   };
 }
