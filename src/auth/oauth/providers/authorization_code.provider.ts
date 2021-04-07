@@ -1,10 +1,11 @@
-import { Injectable, Inject } from "@nestjs/common";
-import { OAuth2Model } from "../interfaces";
-import { OAuthService } from "../oauth.service";
-import { oauth } from "src/config/constants";
+import { Injectable, Inject } from '@nestjs/common';
+import { OAuth2Model } from '../interfaces';
+import { OAuthService } from '../oauth.service';
+import { oauth } from 'src/config/constants';
 
+import * as Express from 'express';
 import * as OAuth from 'express-oauth-server';
-import { oauth2Options } from "../oauth.config";
+import { oauth2Options } from '../oauth.config';
 
 @Injectable()
 export class AuthorizationCodeProvider {
@@ -15,7 +16,21 @@ export class AuthorizationCodeProvider {
   ) {
     this.oauth = new OAuth({
       model: oauthModel,
-      ...oauth2Options
+      ...oauth2Options,
     });
   }
+
+  authenticateMiddleware(
+    request: Express.Request,
+    response: Express.Response,
+    next: Express.NextFunction,
+  ) {}
+
+  authorizeHandler(
+    request: Express.Request,
+    response: Express.Response,
+    next: Express.NextFunction,
+  ) {}
+
+  tokenExchange(request: Express.Request, response: Express.Response, next: Express.NextFunction) {}
 }

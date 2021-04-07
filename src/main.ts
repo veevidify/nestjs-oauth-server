@@ -29,7 +29,7 @@ async function bootstrap() {
   app.use(
     session({
       secret: web.SESSION_SECRET,
-      saveUninitialized: true,
+      saveUninitialized: false,
       resave: false,
     }),
   );

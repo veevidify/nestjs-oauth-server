@@ -9,7 +9,6 @@ import { classToPlain } from 'class-transformer';
 import * as createCuid from 'cuid';
 import { addDays } from 'date-fns';
 import { generateCode } from 'src/utils/functions';
-import { AuthorizationCodeProvider } from './providers/authorization_code.provider';
 
 @Injectable()
 export class OAuthService {
@@ -18,7 +17,7 @@ export class OAuthService {
     @InjectRepository(Client) private clientRepository: Repository<Client>,
     @InjectRepository(AuthorizationCode) private codeRepository: Repository<AuthorizationCode>,
     @InjectRepository(AccessToken) private accessTokenRepository: Repository<AccessToken>,
-  ) { }
+  ) {}
 
   // === repository wrappers === //
 
@@ -62,10 +61,10 @@ export class OAuthService {
     return this.accessTokenRepository.create(payload);
   }
 
- public async persistAccessToken(
-   accessToken: Partial<AccessToken>,
-   user?: User,
-   client?: Client,
+  public async persistAccessToken(
+    accessToken: Partial<AccessToken>,
+    user?: User,
+    client?: Client,
   ): Promise<AccessToken | null> {
     accessToken.client = client;
     accessToken.user = user;
@@ -135,6 +134,12 @@ export class OAuthService {
     }
 
     return null;
+  }
+
+  async validateAccessToken(token: string): Promise<AccessToken | null> {
+    const accessToken = await this.findAccessToken(token);
+
+    return accessToken;
   }
 
   // === end repository wrappers === //

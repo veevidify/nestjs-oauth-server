@@ -9,26 +9,32 @@ import { UsersService } from 'src/users/users.service';
 import { AuthorizationCodeModel } from './models/authorization_code.model';
 import { AuthorizationCodeProvider } from './providers/authorization_code.provider';
 import { oauth } from 'src/config/constants';
+import { LocalSerialiser } from '../serialisers/local.serialiser';
+import { AuthModule } from '../auth.module';
+import { ClientBasicStrategy } from '../strategies/basic.strategy';
+import { ClientPasswordStrategy } from '../strategies/client_password.strategy';
+import { BearerStrategy } from '../strategies/bearer.strategy';
 
 const modelFactory = {
   provide: oauth.MODEL_INJECT_TOKEN,
   useFactory: (oauthService: OAuthService) => {
     return new AuthorizationCodeModel(oauthService);
   },
-  inject: [OAuthService]
+  inject: [OAuthService],
 };
 
 @Module({
-  imports: [TypeOrmModule.forFeature([
-    AccessToken,
-    AuthorizationCode,
-    Client,
-    User,
-  ])],
-  providers: [OAuthService, UsersService, modelFactory, AuthorizationCodeProvider],
+  imports: [TypeOrmModule.forFeature([AccessToken, AuthorizationCode, Client, User]), AuthModule],
+  providers: [
+    OAuthService,
+    UsersService,
+    ClientBasicStrategy,
+    ClientPasswordStrategy,
+    BearerStrategy,
+    modelFactory,
+    AuthorizationCodeProvider,
+  ],
   exports: [TypeOrmModule, OAuthService],
   controllers: [],
 })
-export class OAuthModule {
-  constructor(private oauthService: OAuthService) { }
-}
+export class OAuthModule {}

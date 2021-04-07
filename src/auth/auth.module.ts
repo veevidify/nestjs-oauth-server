@@ -7,16 +7,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { jwtConstants } from 'src/config/constants';
-import { ClientBasicStrategy } from './strategies/basic.strategy';
-import { ClientPasswordStrategy } from './strategies/client_password.strategy';
-import { OAuthModule } from './oauth/oauth.module';
-import { BearerStrategy } from './strategies/bearer.strategy';
+import { LocalSerialiser } from './serialisers/local.serialiser';
 
 @Module({
   imports: [
     UsersModule,
-    PassportModule,
-    OAuthModule,
+    PassportModule.register({ session: true, defaultStrategy: 'local' }),
     JwtModule.register({
       secret: jwtConstants.SECRET,
       signOptions: { expiresIn: '7d' },
@@ -26,9 +22,7 @@ import { BearerStrategy } from './strategies/bearer.strategy';
     AuthService,
     LocalStrategy,
     JwtStrategy,
-    ClientBasicStrategy,
-    ClientPasswordStrategy,
-    BearerStrategy,
+    LocalSerialiser,
   ],
   exports: [AuthService],
   controllers: [AuthController],

@@ -142,8 +142,7 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
     _callback?: Callback<string | Falsey>,
   ): Promise<string | string[] | Falsey> => {
     const scopes = flatMap([scope], id);
-    if (scopes.includes('admin'))
-      return false;
+    if (scopes.includes('admin')) return false;
 
     return scope;
   };

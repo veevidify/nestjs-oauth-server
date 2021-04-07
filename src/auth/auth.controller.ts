@@ -1,7 +1,8 @@
 import { LocalAuthGuard } from './guards/local.guard';
-import { Controller, Post, Get, Render, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Render, Query, Req, Res, UseGuards, UseFilters } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { Request, Response } from 'express';
+import { RedirectUnauthorisedFilter } from 'src/exceptions/unathorised.handler';
 
 @Controller('auth')
 export class AuthController {
@@ -9,11 +10,6 @@ export class AuthController {
 
   // route will receive 401 on unauthenticated creds -- validated by local guard
   // on authenticated, sign & issue jwt
-  // @UseGuards(LocalAuthGuard)
-  // @Post('/login')
-  // async login(@Request() req) {
-  //   return this.authService.authenticated(req.user);
-  // }
 
   @Get('login')
   @Render('login-form')
@@ -27,9 +23,23 @@ export class AuthController {
   }
 
   @UseGuards(LocalAuthGuard)
+  @UseFilters(RedirectUnauthorisedFilter)
   @Post('login')
-  login() {
-    return;
+  async login(@Req() req: Request, @Res() res) {
+    const redirect = req.query.redirect;
+
+    let redirectTo: string;
+    switch (redirect) {
+      case '/oauth/authorize':
+        redirectTo = '/oauth/authorize';
+        break;
+      case '/':
+      default:
+        redirectTo = '/';
+        break;
+    }
+
+    return res.redirect(redirectTo);
   }
 
   @Get('logout')

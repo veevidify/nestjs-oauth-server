@@ -1,10 +1,12 @@
-import { Controller, Request, UseGuards, Post, Get, Req, Render } from '@nestjs/common';
+import { Controller, Request, UseGuards, Post, Get, Req, Render, UseFilters } from '@nestjs/common';
 import { BasicAuthGuard } from 'src/auth/guards/basic.guard';
 import { Client } from 'src/entities/client.entity';
 import { ClientPasswordAuthGuard } from 'src/auth/guards/client_password.guard';
 import { OAuthService } from './oauth.service';
 import { AuthService } from '../auth.service';
-
+import { LocalAuthGuard } from '../guards/local.guard';
+import { RedirectUnauthorisedFilter } from 'src/exceptions/unathorised.handler';
+import { AuthenticatedGuard } from '../guards/authenticated.guard';
 
 @Controller('oauth')
 export class OAuthController {
@@ -13,27 +15,28 @@ export class OAuthController {
     private readonly authService: AuthService
   ) { }
 
-  @UseGuards(BasicAuthGuard)
-  @UseGuards(ClientPasswordAuthGuard)
-  @Post('client')
-  getProfileClient(@Request() req): Partial<Client> {
-    return req.user;
-  }
+  // @UseGuards(BasicAuthGuard)
+  // @UseGuards(ClientPasswordAuthGuard)
+  // @Post('client')
+  // getProfileClient(@Request() req): Partial<Client> {
+  //   return req.user;
+  // }
 
+  @UseFilters(RedirectUnauthorisedFilter)
+  @UseGuards(AuthenticatedGuard)
   @Get('authorize')
   @Render('authorize')
   authorization(@Req() req) {
-    // extra authorize logic
-    return {
-      transactionId: req.oauth2.transactionID,
-      user: req.user,
-      client: req.oauth2.client,
-    };
+    // authorize logic
+    const user = req.user;
+    console.log({ user });
+    return { user };
   }
 
-  @Post('authorize/decision')
+  @UseGuards(AuthenticatedGuard)
+  @Post('authorize')
   decision() {
-    // extra decision logic
+    // decision logic
     return;
   }
 
@@ -41,7 +44,7 @@ export class OAuthController {
   @UseGuards(ClientPasswordAuthGuard)
   @Post('token')
   token() {
-    // extra token exchange logic
+    // token exchange logic
     return;
   }
 }
