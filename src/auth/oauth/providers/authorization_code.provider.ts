@@ -4,10 +4,9 @@ import { OAuthService } from '../oauth.service';
 import { oauth } from 'src/config/constants';
 
 import * as ExpressOAuth from 'express-oauth-server';
-import * as OAuth from 'oauth2-server';
+import * as OAuth2 from 'oauth2-server';
 import * as Express from 'express';
 import { oauth2Options } from '../oauth.config';
-import { AccessToken } from 'src/entities/access_token.entity';
 
 @Injectable()
 export class AuthorizationCodeProvider {
@@ -17,19 +16,19 @@ export class AuthorizationCodeProvider {
     request: Express.Request,
     response: Express.Response,
     next: Express.NextFunction,
-  ) => Promise<OAuth.Token>;
+  ) => Promise<OAuth2.Token>;
 
   public authorizeHandler: (
     request: Express.Request,
     response: Express.Response,
     next: Express.NextFunction,
-  ) => Promise<OAuth.AuthorizationCode>;
+  ) => Promise<OAuth2.AuthorizationCode>;
 
   public tokenExchange: (
     request: Express.Request,
     response: Express.Response,
     next: Express.NextFunction,
-  ) => Promise<OAuth.Token>;
+  ) => Promise<OAuth2.Token>;
 
   constructor(
     @Inject(oauth.MODEL_INJECT_TOKEN) private oauthModel: OAuth2Model,

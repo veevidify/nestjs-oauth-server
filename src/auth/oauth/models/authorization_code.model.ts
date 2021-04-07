@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import * as OAuth2Server from 'oauth2-server';
+import * as OAuth2 from 'oauth2-server';
 import { OAuthService } from '../oauth.service';
 import { Client } from 'src/entities/client.entity';
 import { User } from 'src/entities/user.entity';
@@ -10,7 +10,7 @@ import { AuthorizationCode } from 'src/entities/authorization_code.entity';
 import { flatMap, boolifyPromise, id } from 'src/utils/functions';
 
 @Injectable()
-export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeModel {
+export class AuthorizationCodeModel implements OAuth2.AuthorizationCodeModel {
   constructor(private oauthService: OAuthService) {}
 
   /**

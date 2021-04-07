@@ -31,12 +31,18 @@ insert into public.client (
     "clientId",
     "clientSecret",
     "redirectUris",
-    "isTrusted"
+    "isTrusted",
+    "grants",
+    "accessTokenLifetime",
+    "refreshTokenLifetime"
   )
 values (
     'Test Client',
     'testid',
     'testsecret',
-    '{http://localhost:3000, http://localhost:3000/login}',
-    TRUE
+    '{http://localhost:3000, http://localhost:3001, http://localhost:3002, http://localhost:3003, http://localhost:3004, http://localhost:3005}',
+    TRUE,
+    '{authorization_code, client_credentials, password, refresh_token}',
+    3600,
+    3600
   )

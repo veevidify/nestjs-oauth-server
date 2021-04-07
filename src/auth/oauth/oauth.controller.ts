@@ -1,4 +1,4 @@
-import { Controller, Request, UseGuards, Post, Get, Req, Render, UseFilters, Res, Next, UnauthorizedException } from '@nestjs/common';
+import { Controller, UseGuards, Post, Get, Req, Render, UseFilters, Res, Next, UnauthorizedException } from '@nestjs/common';
 import { BasicAuthGuard } from 'src/auth/guards/basic.guard';
 import { ClientPasswordAuthGuard } from 'src/auth/guards/client_password.guard';
 import { RedirectUnauthorisedFilter } from 'src/exceptions/unathorised.handler';

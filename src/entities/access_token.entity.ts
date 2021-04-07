@@ -10,11 +10,11 @@ import {
 import { Client } from './client.entity';
 import { User } from './user.entity';
 
-import * as OAuth from 'oauth2-server';
+import * as OAuth2 from 'oauth2-server';
 
 @Entity()
 @Unique(['id'])
-export class AccessToken implements OAuth.Token {
+export class AccessToken implements OAuth2.Token {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

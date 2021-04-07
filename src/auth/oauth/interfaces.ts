@@ -1,8 +1,8 @@
-import * as OAuth from 'oauth2-server';
+import * as OAuth2 from 'oauth2-server';
 
 export type OAuth2Model =
-  | OAuth.AuthorizationCodeModel
-  | OAuth.ClientCredentialsModel
-  | OAuth.RefreshTokenModel
-  | OAuth.PasswordModel
-  | OAuth.ExtensionModel;
+  | OAuth2.AuthorizationCodeModel
+  | OAuth2.ClientCredentialsModel
+  | OAuth2.RefreshTokenModel
+  | OAuth2.PasswordModel
+  | OAuth2.ExtensionModel;
