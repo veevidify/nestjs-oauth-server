@@ -86,6 +86,7 @@ export class AuthorizationCodeModel implements OAuth2Server.AuthorizationCodeMod
 
   /**
    * Invoked to save an authorization code.
+   * redirectUri is post-filled (after HTTP request)
    *
    */
   saveAuthorizationCode = async (

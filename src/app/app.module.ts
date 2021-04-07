@@ -36,7 +36,7 @@ import { OAuthController } from 'src/auth/oauth/oauth.controller';
     UsersModule,
   ],
   providers: [AppService, UsersService, OAuthService],
-  controllers: [AppController, UsersController, AuthController, OAuthController],
+  controllers: [AppController, UsersController],
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {

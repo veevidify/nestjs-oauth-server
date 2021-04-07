@@ -16,7 +16,15 @@ export class RedirectUnauthorisedFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
 
-    const redirectPostLogin = request.path === '/oauth/authorize' ? '?redirect=/oauth/authorize' : '?redirect=/';
+    const {
+      client_id: clientId,
+      redirect_uri: redirectUri,
+    } = request.query;
+
+    const redirectPostLogin =
+      request.path === '/oauth/authorize'
+        ? `?redirect=/oauth/authorize&client_id=${clientId}&redirect_uri=${redirectUri}`
+        : '?redirect=/';
 
     return response.status(status).redirect('/auth/login' + redirectPostLogin);
   }
