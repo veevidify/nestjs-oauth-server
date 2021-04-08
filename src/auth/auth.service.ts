@@ -1,4 +1,4 @@
-import { JwtAuthenticatable } from 'src/auth/interface';
+import { JwtAuthenticatable } from 'src/auth/interfaces';
 /* eslint-disable @typescript-eslint/camelcase */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -10,7 +10,10 @@ import { classToPlain } from 'class-transformer';
 // all pure function, with mockable services dependencies
 @Injectable()
 export class AuthService {
-  constructor(private userService: UsersService, private jwtService: JwtService) {}
+  constructor(
+    private userService: UsersService,
+    private jwtService: JwtService,
+  ) { }
 
   async validateUser(username: string, password: string): Promise<Partial<User> | null> {
     const user = await this.userService.getUserByUsername(username);

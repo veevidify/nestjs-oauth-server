@@ -1,4 +1,4 @@
-import { JwtAuthenticatable } from 'src/auth/interface';
+import { JwtAuthenticatable } from 'src/auth/interfaces';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,9 +6,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Unique,
+  OneToMany,
 } from 'typeorm';
 import * as bc from 'bcryptjs';
 import { Exclude } from 'class-transformer';
+import { AuthorizationCode } from './authorization_code.entity';
+import { AccessToken } from './access_token.entity';
 
 @Entity()
 @Unique(['id', 'username'])
@@ -39,6 +42,18 @@ export class User {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => AuthorizationCode, code => code.user, {
+    cascade: ['remove'],
+    eager: false,
+  })
+  authorizationCodes: AuthorizationCode[];
+
+  @OneToMany(() => AccessToken, accessToken => accessToken.user, {
+    cascade: ['remove'],
+    eager: false,
+  })
+  accessTokens: AccessToken[];
 
   public static validatePassword = (user: User, inputPassword: string) => {
     return bc.compareSync(inputPassword, user.password);
