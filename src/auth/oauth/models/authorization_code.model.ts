@@ -7,7 +7,7 @@ import { User } from 'src/entities/user.entity';
 import { Falsey, Nullable } from 'src/utils/types';
 import { AccessToken } from 'src/entities/access_token.entity';
 import { AuthorizationCode } from 'src/entities/authorization_code.entity';
-import { flatMap, boolifyPromise, id, liftPromise } from 'src/utils/functions';
+import { flatMap, boolifyPromise, id } from 'src/utils/functions';
 
 @Injectable()
 export class AuthorizationCodeModel implements OAuth2.AuthorizationCodeModel {
@@ -56,23 +56,22 @@ export class AuthorizationCodeModel implements OAuth2.AuthorizationCodeModel {
 
   /**
    * Invoked to generate a new authorization code.
-   * Not working due to library's promisify shenanigans
    */
-  // generateAuthorizationCode = async (
-  //   client: Client,
-  //   user: User,
-  //   scope: string | string[],
-  // ): Promise<string> => {
-  //   const scopes = flatMap([scope], id);
-  //   const authorizationCode = this.oauthService.createAuthorizationCode(
-  //     client.redirectUris[0] ?? '',
-  //     scopes,
-  //     client,
-  //     user,
-  //   );
-  //   console.log({ authorizationCode });
-  //   return authorizationCode.authorizationCode;
-  // };
+  generateAuthorizationCode = async (
+    client: Client,
+    user: User,
+    scope: string | string[],
+  ): Promise<string> => {
+    const scopes = flatMap([scope], id);
+    const authorizationCode = this.oauthService.createAuthorizationCode(
+      client.redirectUris[0] ?? '',
+      scopes,
+      client,
+      user,
+    );
+    console.log({ authorizationCode });
+    return authorizationCode.authorizationCode;
+  };
 
   /**
    * Invoked to retrieve an existing authorization code previously saved through Model#saveAuthorizationCode().

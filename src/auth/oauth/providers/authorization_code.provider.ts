@@ -1,52 +1,42 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { OAuth2Model } from '../interfaces';
+import { Injectable } from '@nestjs/common';
 import { OAuthService } from '../oauth.service';
-import { oauth } from 'src/config/constants';
 
-import * as ExpressOAuth from 'express-oauth-server';
-import * as OAuth2 from 'oauth2-server';
 import * as Express from 'express';
-import { oauth2Options } from '../oauth.config';
+import { ExpressOAuth } from './oauth2.express';
 
 @Injectable()
 export class AuthorizationCodeProvider {
-  private oauth: ExpressOAuth;
 
   public authenticateMiddleware: (
     request: Express.Request,
     response: Express.Response,
     next: Express.NextFunction,
-  ) => Promise<OAuth2.Token>;
+  ) => Promise<void>;
 
   public authorizeHandler: (
     request: Express.Request,
     response: Express.Response,
     next: Express.NextFunction,
-  ) => Promise<OAuth2.AuthorizationCode>;
+  ) => Promise<void>;
 
   public tokenExchange: (
     request: Express.Request,
     response: Express.Response,
     next: Express.NextFunction,
-  ) => Promise<OAuth2.Token>;
+  ) => Promise<void>;
 
   constructor(
-    @Inject(oauth.MODEL_INJECT_TOKEN) private oauthModel: OAuth2Model,
     private oauthService: OAuthService,
+    private expressOAuth: ExpressOAuth,
   ) {
-    this.oauth = new ExpressOAuth({
-      model: this.oauthModel,
-      ...oauth2Options,
-    });
-
-    this.authenticateMiddleware = this.oauth.authenticate();
-    this.authorizeHandler = this.oauth.authorize({
+    this.authenticateMiddleware = this.expressOAuth.authenticate();
+    this.authorizeHandler = this.expressOAuth.authorize({
       authenticateHandler: { handle: (req: Express.Request) => req.user }
     });
-    this.tokenExchange = this.oauth.token();
+    this.tokenExchange = this.expressOAuth.token();
   }
 
   public setOAuth(oauth: ExpressOAuth) {
-    this.oauth = oauth;
+    this.expressOAuth = oauth;
   }
 }

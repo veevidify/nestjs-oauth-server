@@ -1,6 +1,6 @@
-import * as OAuth2Server from 'express-oauth-server';
+import { IOAuthServerOptions } from './providers/oauth2.express';
 
-export const oauth2Options: Omit<OAuth2Server.Options, 'model'> = {
+export const oauth2Options: Omit<IOAuthServerOptions, 'model'> = {
   accessTokenLifetime: 60 * 60 * 24,
   allowEmptyState: true,
   allowExtendedTokenAttributes: true,
