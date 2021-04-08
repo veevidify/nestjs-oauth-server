@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Get, Req, Render, UseFilters, Res, Next, UnauthorizedException } from '@nestjs/common';
+import { Controller, UseGuards, Post, Get, Req, Render, UseFilters, Res, Next, UnauthorizedException, HttpStatus } from '@nestjs/common';
 import { BasicAuthGuard } from 'src/auth/guards/basic.guard';
 import { ClientPasswordAuthGuard } from 'src/auth/guards/client_password.guard';
 import { RedirectUnauthorisedFilter } from 'src/exceptions/unathorised.handler';
@@ -11,7 +11,7 @@ export class OAuthController {
   constructor(
     private readonly oauthService: OAuthService,
     private readonly authorizationCodeProvider: AuthorizationCodeProvider,
-  ) { }
+  ) {  }
 
   @UseFilters(RedirectUnauthorisedFilter)
   @UseGuards(AuthenticatedGuard)
@@ -27,7 +27,7 @@ export class OAuthController {
     } = req.query;
 
     const client = await this.oauthService.getClientByClientId(clientId);
-    console.log({ user, clientId, client });
+    // TODO: redirect /home with invalid client, but stay logged in
     if (! client) throw new UnauthorizedException('Invalid Client');
 
     return { user, client, redirectUri };
@@ -36,16 +36,18 @@ export class OAuthController {
   @UseFilters(RedirectUnauthorisedFilter)
   @UseGuards(AuthenticatedGuard)
   @Post('authorize')
-  authorise(@Req() req, @Res() res, @Next() next) {
+  async authorise(@Req() req, @Res() res, @Next() next) {
     // extra user authorising logic
-    return this.authorizationCodeProvider.authorizeHandler(res, req, next);
+
+    const authorizationCode = await this.authorizationCodeProvider.authorizeHandler(req, res, next);
+    return authorizationCode;
   }
 
   @UseGuards(BasicAuthGuard)
   @UseGuards(ClientPasswordAuthGuard)
   @Post('token')
-  token(@Req() req, @Res() res, @Next() next) {
+  async token(@Req() req, @Res() res, @Next() next) {
     // extra token exchange logic
-    return this.authorizationCodeProvider.tokenExchange(req, res, next);
+    return await this.authorizationCodeProvider.tokenExchange(req, res, next);
   }
 }

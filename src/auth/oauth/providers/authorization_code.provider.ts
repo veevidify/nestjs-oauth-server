@@ -40,7 +40,9 @@ export class AuthorizationCodeProvider {
     });
 
     this.authenticateMiddleware = this.oauth.authenticate();
-    this.authorizeHandler = this.oauth.authorize();
+    this.authorizeHandler = this.oauth.authorize({
+      authenticateHandler: { handle: (req: Express.Request) => req.user }
+    });
     this.tokenExchange = this.oauth.token();
   }
 

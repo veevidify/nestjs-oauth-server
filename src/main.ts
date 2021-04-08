@@ -4,9 +4,10 @@ import { GeneralExceptionHandler } from './exceptions/all.handler';
 import { AppModule } from './app/app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { resolve } from 'path';
-import * as hbs from 'hbs';
-import * as passport from 'passport';
-import * as session from 'express-session';
+import * as HBS from 'hbs';
+import * as Passport from 'passport';
+import * as Session from 'express-session';
+import * as BodyParser from 'body-parser';
 import { web } from './config/constants';
 
 // entrypoint
@@ -24,17 +25,18 @@ async function bootstrap() {
   app.setBaseViewsDir(resolve('./src/views'));
   app.setViewEngine('hbs');
 
-  hbs.registerPartials(resolve('./src/views/partials'));
+  HBS.registerPartials(resolve('./src/views/partials'));
 
   app.use(
-    session({
+    Session({
       secret: web.SESSION_SECRET,
       saveUninitialized: false,
       resave: false,
     }),
   );
-  app.use(passport.initialize());
-  app.use(passport.session());
+  app.use(Passport.initialize());
+  app.use(Passport.session());
+  app.use(BodyParser.urlencoded({ extended: true }));
 
   await app.listen(3000);
 }

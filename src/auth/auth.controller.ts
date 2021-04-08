@@ -51,7 +51,6 @@ export class AuthController {
         redirectTo = '/';
         break;
     }
-    console.log({ redirect, redirectTo });
 
     return res.redirect(redirectTo);
   }
