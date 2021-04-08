@@ -69,7 +69,6 @@ export class AuthorizationCodeModel implements OAuth2.AuthorizationCodeModel {
       client,
       user,
     );
-    console.log({ authorizationCode });
     return authorizationCode.authorizationCode;
   };
 
@@ -91,7 +90,6 @@ export class AuthorizationCodeModel implements OAuth2.AuthorizationCodeModel {
     client: Client,
     user: User,
   ): Promise<AuthorizationCode | Falsey> => {
-    console.log('== saving code', { code });
     code.scope = flatMap([code.scope], id);
     return await this.oauthService.persistAuthorizationCode(code, client, user);
   };
