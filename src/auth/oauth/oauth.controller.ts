@@ -3,7 +3,7 @@ import { BasicAuthGuard } from 'src/auth/guards/basic.guard';
 import { ClientPasswordAuthGuard } from 'src/auth/guards/client_password.guard';
 import { RedirectUnauthorisedFilter } from 'src/exceptions/unathorised.handler';
 import { AuthenticatedGuard } from '../guards/authenticated.guard';
-import { AuthorizationCodeProvider } from './providers/authorization_code.provider';
+import { AuthorizationCodeProvider } from './oauth.provider';
 import { OAuthService } from './oauth.service';
 
 @Controller('oauth')

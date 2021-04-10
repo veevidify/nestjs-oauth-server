@@ -6,8 +6,8 @@ import { AuthorizationCode } from 'src/entities/authorization_code.entity';
 import { Client } from 'src/entities/client.entity';
 import { User } from 'src/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { AuthorizationCodeModel } from './models/authorization_code.model';
-import { AuthorizationCodeProvider } from './providers/authorization_code.provider';
+import { OAuthModel } from './oauth.model';
+import { AuthorizationCodeProvider } from './oauth.provider';
 import { oauth } from 'src/config/constants';
 import { AuthModule } from '../auth.module';
 import { ClientBasicStrategy } from '../strategies/basic.strategy';
@@ -19,7 +19,7 @@ import { ExpressOAuth } from './providers/oauth2.express';
 const modelFactory = {
   provide: oauth.MODEL_INJECT_TOKEN,
   useFactory: (oauthService: OAuthService) => {
-    const model = new AuthorizationCodeModel(oauthService);
+    const model = new OAuthModel(oauthService);
     return model;
   },
   inject: [OAuthService],

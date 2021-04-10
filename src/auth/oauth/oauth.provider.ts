@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { OAuthService } from '../oauth.service';
+import { OAuthService } from './oauth.service';
 
 import * as Express from 'express';
-import { ExpressOAuth } from './oauth2.express';
+import { ExpressOAuth } from './providers/oauth2.express';
 
 @Injectable()
 export class AuthorizationCodeProvider {

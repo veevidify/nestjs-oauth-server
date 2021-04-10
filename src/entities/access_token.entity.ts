@@ -24,8 +24,9 @@ export class AccessToken implements OAuth2.Token {
   @Column({ default: new Date() })
   accessTokenExpiresAt?: Date;
 
-  @Column({ default: null })
-  refreshToken?: string;
+  // can be empty (depends on grant type)
+  @Column({ default: '' })
+  refreshToken: string;
 
   @Column({ default: null })
   refreshTokenExpiresAt?: Date;

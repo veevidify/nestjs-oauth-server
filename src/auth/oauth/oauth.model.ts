@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import * as OAuth2 from 'oauth2-server';
-import { OAuthService } from '../oauth.service';
+import { OAuthService } from './oauth.service';
 import { Client } from 'src/entities/client.entity';
 import { User } from 'src/entities/user.entity';
 import { Falsey, Nullable } from 'src/utils/types';
 import { AccessToken } from 'src/entities/access_token.entity';
 import { AuthorizationCode } from 'src/entities/authorization_code.entity';
 import { flatMap, boolifyPromise, id } from 'src/utils/functions';
+import { OAuth2Model } from './interfaces';
 
 @Injectable()
-export class AuthorizationCodeModel implements OAuth2.AuthorizationCodeModel {
+export class OAuthModel implements OAuth2Model {
   constructor(private oauthService: OAuthService) {}
 
   /**
@@ -131,5 +131,43 @@ export class AuthorizationCodeModel implements OAuth2.AuthorizationCodeModel {
     if (scopes.includes('admin') && !user.roles.includes('admin')) return false;
 
     return scope;
+  };
+
+  /**
+   * Invoked to generate a new refresh token.
+   *
+   */
+  generateRefreshToken = async (
+    client: Client,
+    user: User,
+    scope: string | string[],
+  ): Promise<string> => {
+    return '';
+  };
+
+  /**
+   * Invoked to retrieve an existing refresh token previously saved through Model#saveToken().
+   *
+   */
+  getRefreshToken = async (refreshToken: string): Promise<AccessToken | Falsey> => {
+    return false;
+  };
+
+
+  /**
+   * Invoked to revoke a refresh token.
+   *
+   */
+  revokeToken = async (token: AccessToken): Promise<boolean> => {
+    return false;
+  };
+
+
+  /**
+   * Invoked to retrieve a user using a username/password combination.
+   *
+   */
+  getUser = async (username: string, password: string): Promise<User | Falsey> => {
+    return false;
   };
 }
