@@ -1,5 +1,15 @@
 import * as bc from 'bcryptjs';
-import { Get, Controller, HttpCode, Param, Post, Body, UsePipes } from '@nestjs/common';
+import {
+  Get,
+  Controller,
+  HttpCode,
+  Param,
+  Post,
+  Body,
+  UsePipes,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 
 import { UsersService } from 'src/users/users.service';
 import { ValidationPipe } from 'src/utils/validation.pipe';
@@ -7,6 +17,7 @@ import { User } from 'src/entities/user.entity';
 import { RolesAuthorised } from 'src/auth/guards/decorators';
 
 import { CreateUserDto } from './interfaces';
+import { BearerAuthGuard } from 'src/auth/guards/bearer.guard';
 
 @Controller('users')
 export class UsersController {
@@ -37,5 +48,13 @@ export class UsersController {
     };
 
     return this.userService.add(userDetails);
+  }
+
+  @Get('/profile')
+  @HttpCode(200)
+  @UseGuards(BearerAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req): Partial<User> {
+    return req.user;
   }
 }
