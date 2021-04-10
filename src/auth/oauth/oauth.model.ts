@@ -11,7 +11,9 @@ import { OAuth2Model } from './interfaces';
 
 @Injectable()
 export class OAuthModel implements OAuth2Model {
-  constructor(private oauthService: OAuthService) {}
+  constructor(
+    private oauthService: OAuthService,
+  ) {}
 
   /**
    * Invoked to generate a new access token.
@@ -142,7 +144,9 @@ export class OAuthModel implements OAuth2Model {
     user: User,
     scope: string | string[],
   ): Promise<string> => {
-    return '';
+    const scopes = flatMap([scope], id);
+    const accessToken = this.oauthService.createAccessToken(scopes, client, user);
+    return accessToken.refreshToken;
   };
 
   /**
@@ -150,7 +154,7 @@ export class OAuthModel implements OAuth2Model {
    *
    */
   getRefreshToken = async (refreshToken: string): Promise<AccessToken | Falsey> => {
-    return false;
+    return await this.oauthService.findAccessTokenByRefreshToken(refreshToken);
   };
 
 
@@ -159,7 +163,7 @@ export class OAuthModel implements OAuth2Model {
    *
    */
   revokeToken = async (token: AccessToken): Promise<boolean> => {
-    return false;
+    return await boolifyPromise(this.oauthService.removeAccessToken(token));
   };
 
 
@@ -168,6 +172,6 @@ export class OAuthModel implements OAuth2Model {
    *
    */
   getUser = async (username: string, password: string): Promise<User | Falsey> => {
-    return false;
+    return await this.oauthService.validateUser(username, password);
   };
 }

@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { AccessToken } from 'src/entities/access_token.entity';
 import { AuthorizationCode } from 'src/entities/authorization_code.entity';
-import { classToPlain } from 'class-transformer';
 import * as createCuid from 'cuid';
 import { addDays } from 'date-fns';
 import { generateCode } from 'src/utils/functions';
@@ -62,13 +61,13 @@ export class OAuthService {
   }
 
   public async persistAccessToken(
-    accessToken: Partial<AccessToken>,
+    token: Partial<AccessToken>,
     user?: User,
     client?: Client,
   ): Promise<AccessToken | null> {
-    accessToken.client = client;
-    accessToken.user = user;
-    return await this.accessTokenRepository.save(accessToken);
+    token.client = client;
+    token.user = user;
+    return await this.accessTokenRepository.save(token);
   }
 
   public async getClientByClientId(clientId: string): Promise<Client | null> {
@@ -81,27 +80,36 @@ export class OAuthService {
     return code;
   }
 
-  public async findAccessToken(token: string): Promise<AccessToken | null> {
-    const accessToken = await this.accessTokenRepository.findOne({ where: { token } });
-    return accessToken;
+  public async findAccessToken(accessToken: string): Promise<AccessToken | null> {
+    const token = await this.accessTokenRepository.findOne({ where: { accessToken } });
+    return token;
+  }
+
+  public async findAccessTokenByRefreshToken(refreshToken: string): Promise<AccessToken | null> {
+    const token = await this.accessTokenRepository.findOne({ where: { refreshToken } });
+    return token;
   }
 
   public async findAccessTokenByUserAndClient(
     user: User,
     client: Client,
   ): Promise<AccessToken | null> {
-    const accessToken = await this.accessTokenRepository.findOne({
+    const token = await this.accessTokenRepository.findOne({
       where: {
         userId: user.id,
         clientId: client.id,
       },
     });
 
-    return accessToken;
+    return token;
   }
 
   public async removeAuthorizationCode(code: AuthorizationCode) {
     return await this.codeRepository.delete(code.id);
+  }
+
+  public async removeAccessToken(token: AccessToken) {
+    return await this.accessTokenRepository.delete(token.id);
   }
 
   public async removeAccessTokens(user: User, client: Client) {
@@ -116,11 +124,11 @@ export class OAuthService {
   }
 
   // == requires overlapping functions with authService to support password grant
-  public async validateUser(username: string, password: string): Promise<Partial<User> | null> {
+  public async validateUser(username: string, password: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { username } });
 
     if (user && User.validatePassword(user, password)) {
-      return classToPlain(user);
+      return user;
     }
 
     return null;
@@ -136,10 +144,10 @@ export class OAuthService {
     return null;
   }
 
-  async validateAccessToken(token: string): Promise<AccessToken | null> {
-    const accessToken = await this.findAccessToken(token);
+  async validateAccessToken(accessToken: string): Promise<AccessToken | null> {
+    const token = await this.findAccessToken(accessToken);
 
-    return accessToken;
+    return token;
   }
 
   // === end repository wrappers === //
