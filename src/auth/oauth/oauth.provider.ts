@@ -5,8 +5,7 @@ import * as Express from 'express';
 import { ExpressOAuth } from './providers/oauth2.express';
 
 @Injectable()
-export class AuthorizationCodeProvider {
-
+export class OAuthProvider {
   public authenticateMiddleware: (
     request: Express.Request,
     response: Express.Response,

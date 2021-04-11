@@ -3,14 +3,14 @@ import { BasicAuthGuard } from 'src/auth/guards/basic.guard';
 import { ClientPasswordAuthGuard } from 'src/auth/guards/client_password.guard';
 import { RedirectUnauthorisedFilter } from 'src/exceptions/unathorised.handler';
 import { AuthenticatedGuard } from '../guards/authenticated.guard';
-import { AuthorizationCodeProvider } from './oauth.provider';
+import { OAuthProvider } from './oauth.provider';
 import { OAuthService } from './oauth.service';
 
 @Controller('oauth')
 export class OAuthController {
   constructor(
     private readonly oauthService: OAuthService,
-    private readonly authorizationCodeProvider: AuthorizationCodeProvider,
+    private readonly authorizationCodeProvider: OAuthProvider,
   ) {  }
 
   @UseFilters(RedirectUnauthorisedFilter)
