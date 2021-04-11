@@ -26,6 +26,7 @@ export class OAuthModel implements OAuth2Model {
   ): Promise<string> => {
     const scopes = flatMap([scope], id);
     const accessToken = this.oauthService.createAccessToken(scopes, client, user);
+    // TODO: jwt-sign the token returned to user land
     return accessToken.accessToken;
   };
 

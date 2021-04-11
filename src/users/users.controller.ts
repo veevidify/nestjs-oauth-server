@@ -49,12 +49,4 @@ export class UsersController {
 
     return this.userService.add(userDetails);
   }
-
-  @Get('/profile')
-  @HttpCode(200)
-  @UseGuards(BearerAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req): Partial<User> {
-    return req.user;
-  }
 }

@@ -145,6 +145,7 @@ export class OAuthService {
   }
 
   async validateAccessToken(accessToken: string): Promise<AccessToken | null> {
+    // TODO: jwt-sign the token returned to user land
     const token = await this.findAccessToken(accessToken);
 
     return token;
