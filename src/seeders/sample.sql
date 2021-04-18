@@ -40,9 +40,9 @@ values (
     'Test Client',
     'testid',
     'testsecret',
-    '{http://localhost:3000, http://localhost:3001, http://localhost:3002, http://localhost:3003, http://localhost:3004, http://localhost:3005}',
+    '{http://localhost:3000, http://localhost:3001/login?idp=custom}',
     TRUE,
-    '{authorization_code, client_credentials, password, refresh_token}',
+    '{authorization_code, password, refresh_token}',
     3600,
     3600
   )
