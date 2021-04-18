@@ -9,10 +9,13 @@ import {
   Res,
   UseGuards,
   UseFilters,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { Request, Response } from 'express';
 import { RedirectUnauthorisedFilter } from 'src/exceptions/unathorised.handler';
+import { BearerAuthGuard } from './guards/bearer.guard';
+import { User } from 'src/entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -61,8 +64,11 @@ export class AuthController {
     res.redirect('/');
   }
 
-  @Get('account')
-  account() {
-    return `a sample protected 'my account' page`;
+  @Get('/profile')
+  @HttpCode(200)
+  @UseGuards(BearerAuthGuard)
+  @Get('profile')
+  getProfile(@Req() req): Partial<User> {
+    return req.user;
   }
 }

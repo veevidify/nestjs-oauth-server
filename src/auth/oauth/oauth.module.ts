@@ -7,7 +7,7 @@ import { Client } from 'src/entities/client.entity';
 import { User } from 'src/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { OAuthModel } from './oauth.model';
-import { AuthorizationCodeProvider } from './oauth.provider';
+import { OAuthProvider } from './oauth.provider';
 import { oauth } from 'src/config/constants';
 import { AuthModule } from '../auth.module';
 import { ClientBasicStrategy } from '../strategies/basic.strategy';
@@ -35,7 +35,7 @@ const modelFactory = {
     BearerStrategy,
     modelFactory,
     ExpressOAuth,
-    AuthorizationCodeProvider,
+    OAuthProvider,
   ],
   exports: [TypeOrmModule, OAuthService],
   controllers: [OAuthController],
