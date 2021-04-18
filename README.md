@@ -132,7 +132,7 @@ values (
     'Test Client',
     'testid',
     'testsecret',
-    '{http://localhost:3000, http://localhost:3001/login?idp=custom}',
+    '{http://localhost:3000/login?idp=custom, http://localhost:3001/login?idp=custom}',
     TRUE,
     '{authorization_code, password, refresh_token}',
     3600,
@@ -144,3 +144,4 @@ values (
 - You will need to establish an authenticated session to be able to test the oauth2 flow.
 - To demonstrate the basic authorization code flow, you can try using this repository: https://github.com/veevidify/react-material-starter.
 - Refer to its `README.md` to get setup. Afterwards, navigate to `/login` and click on "Login using our IDP".
+- Don't forget to change the url according to your local environment. In my setup, backend (this repo) is listening on localhost:3000, frontend is localhost:3001.

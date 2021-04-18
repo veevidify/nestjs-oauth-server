@@ -40,7 +40,7 @@ values (
     'Test Client',
     'testid',
     'testsecret',
-    '{http://localhost:3000, http://localhost:3001/login?idp=custom}',
+    '{http://localhost:3000/login?idp=custom, http://localhost:3001/login?idp=custom}',
     TRUE,
     '{authorization_code, password, refresh_token}',
     3600,
